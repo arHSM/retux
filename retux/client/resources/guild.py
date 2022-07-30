@@ -721,7 +721,9 @@ class Member(Partial):
     @property
     def avatar(self) -> str | None:
         """The hash of the user's avatar, if present."""
-        return self.exists(self.user, self.user.avatar)
+        if _avatar := self.exists(self.user, self.user.avatar):
+            return _avatar
+        return self.avatar
 
     @property
     def bot(self) -> bool | None:
