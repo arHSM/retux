@@ -159,7 +159,7 @@ class HTTPClient(HTTPProtocol):
         """
         Makes a request to Discord's REST API.
 
-        Attributes
+        Parameters
         ----------
         route : `_Route`
             The route of the API endpoint.
