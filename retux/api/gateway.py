@@ -178,7 +178,7 @@ class GatewayClient(GatewayProtocol):
     Attributes
     ----------
     token : `str`
-        The bot's token.
+        The bots token.
     intents : `Intents`
         The intents to connect with.
     _conn : `trio_websocket.WebSocketConnection`
@@ -186,7 +186,7 @@ class GatewayClient(GatewayProtocol):
     _meta : `_GatewayMeta`
         Metadata representing connection parameters for the Gateway.
     _tasks : `trio.Nursery`
-        The tasks associated with the Gateway, for reconnection and heartbeating.
+        The tasks associated with the Gateway, for reconnection and heart-beating.
     _closed : `bool`
         Whether the Gateway connection is closed or not.
     _stopped : `bool`
@@ -203,7 +203,7 @@ class GatewayClient(GatewayProtocol):
 
     __slots__ = ("token", "intents", "_meta")
     token: str
-    """The bot's token."""
+    """The bots token."""
     intents: Intents
     """The intents to connect with."""
     _conn: WebSocketConnection = None
@@ -211,7 +211,7 @@ class GatewayClient(GatewayProtocol):
     _meta: _GatewayMeta
     """Metadata representing connection parameters for the Gateway."""
     _tasks: Nursery = None
-    """The tasks associated with the Gateway, for reconnection and heartbeating."""
+    """The tasks associated with the Gateway, for reconnection and heart-beating."""
     _closed: bool = True
     """Whether the Gateway connection is closed or not."""
     _stopped: bool = False
@@ -238,7 +238,7 @@ class GatewayClient(GatewayProtocol):
         Parameters
         ----------
         token : `str`
-            The bot's token to connect with.
+            The bots token to connect with.
         intents : `Intents`
             The intents to connect with.
         version : `int`, optional
@@ -282,7 +282,7 @@ class GatewayClient(GatewayProtocol):
             json = loads(resp)
             return structure_attrs_fromdict(json, _GatewayPayload)
         except ConnectionClosed:
-            logger.warn("The connection to Discord's Gateway has closed.")
+            logger.warning("The connection to Discord's Gateway has closed.")
             self._closed = True
             await self.reconnect()
 
@@ -297,14 +297,14 @@ class GatewayClient(GatewayProtocol):
         """
 
         # TODO: implement the gateway rate limiting logic here.
-        # the theory of this is to "queue" dispatched informatoin
+        # the theory of this is to "queue" dispatched information
         # from the Gateway when we enter a rate limit.
 
         try:
             json = dumps(asdict(payload))
             resp = await self._conn.send_message(json)  # noqa
         except ConnectionClosed:
-            logger.warn("The connection to Discord's Gateway has closed.")
+            logger.warning("The connection to Discord's Gateway has closed.")
             await self._conn.aclose()
             await self.reconnect()
 
@@ -354,7 +354,7 @@ class GatewayClient(GatewayProtocol):
                     await self._track(data)
 
     async def reconnect(self):
-        """Reconnects to the Gateway and reinitiates a WebSocket state."""
+        """Reconnects to the Gateway and re-initiates a WebSocket state."""
         self._closed = True
         self._heartbeat_ack = False
 
@@ -609,7 +609,7 @@ class GatewayClient(GatewayProtocol):
         self_deaf: NotNeeded[bool] = MISSING,
     ):
         """
-        Sends a request updating the bot's voice state to the Gateway.
+        Sends a request updating the bots voice state to the Gateway.
 
         Parameters
         ----------

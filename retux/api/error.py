@@ -46,7 +46,9 @@ class HTTPException(Exception):
         content : `str`
             The content of the exception.
 
-        Raises: `HTTPException`
+        Raises
+        ------
+        HTTPException
         """
         super().__init__(content)
 

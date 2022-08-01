@@ -73,7 +73,7 @@ class WelcomeScreen:
     -------
     channels : `list[WelcomeScreenChannel]`, optional
         The channels show in the welcome screen. A maximum
-        of `5` are able to be shown.
+        of `5` are shown.
     """
 
     description: str | None = field(default=None)
@@ -90,7 +90,7 @@ class WelcomeScreen:
     def channels(self) -> list[WelcomeScreenChannel] | None:
         """
         The channels show in the welcome screen. A maximum
-        of `5` are able to be shown.
+        of `5` are shown.
         """
         return self.welcome_channels
 
@@ -108,7 +108,7 @@ class SystemChannelFlags(IntFlag):
     SUPPRESS_GUILD_REMINDER_NOTIFICATIONS = 1 << 2
     """Suppresses server setup tips from the channel."""
     SUPPRESS_JOIN_NOTIFICATION_REPLIES = 1 << 3
-    """Suppresses sticker reply popouts from the channel."""
+    """Suppresses sticker reply pop-outs from the channel."""
 
 
 class GuildNSFWLevel(IntEnum):
@@ -243,7 +243,7 @@ class Guild(Object):
     explicit_content_filter : `ExplicitContentFilterLevel`
         The explicit content filter level of the guild.
     features : `list[str]`
-        The currently enabled features inside of the guild.
+        The currently enabled features of the guild.
     mfa_level : `int`
         The required MFA (rep. by 2FA) level of the guild.
     system_channel_flags : `SystemChannelFlags`
@@ -308,8 +308,8 @@ class Guild(Object):
     approximate_member_count : `int`, optional
         The approximated member count of the guild.
     approximate_presence_count : `int`, optional
-        The approxiated amount of presences in the guild.
-    welcome_screen : `WelcomeSceren`, optional
+        The approximated amount of presences in the guild.
+    welcome_screen : `WelcomeScreen`, optional
         The welcome screen of the guild, if present.
     """
 
@@ -411,7 +411,7 @@ class Guild(Object):
     approximate_member_count: int | None = field(default=None)
     """The approximated member count of the guild."""
     approximate_presence_count: int | None = field(default=None)
-    """The approxiated amount of presences in the guild."""
+    """The approximated amount of presences in the guild."""
     welcome_screen: dict | WelcomeScreen | None = field(
         converter=optional_c(WelcomeScreen), default=None
     )
@@ -534,9 +534,9 @@ class Member(Partial):
     to avoid making users go through an unnecessary chain step.
 
     This dataclass is registered as a "partial" because it derives
-    some of the original information pertaining to a `User` object.
-    Despite this, it also registers as an object albeit the lack
-    of the `id` field being properly given by the Gateway.
+    some information pertaining to a `User` object. Despite this,
+    it also registers as an object albeit the lack of the `id` field
+    being properly given by the Gateway.
 
     ---
 
@@ -573,7 +573,7 @@ class Member(Partial):
         event that is not intended for guilds.
     permissions : `str`, optional
         The calculated permissions of the member in the guild, including
-        any overwrites. This is only returned when passed inside of an
+        any overwrites. This is only returned when passed inside an
         `Interaction` object.
     communication_disabled_until : `datetime`, optional
         The time remaining until the member of the guild has their
@@ -673,7 +673,8 @@ class Member(Partial):
     or when one has ended.
     """
 
-    def exists(self, base: Any, attr: Any) -> Any | None:
+    @staticmethod
+    def exists(base: Any, attr: Any) -> Any | None:
         """
         Determines if a field exists for property methods.
 
@@ -691,7 +692,7 @@ class Member(Partial):
         Returns
         -------
         `typing.Any`, optional
-            The value of the attribute, if it is presnet.
+            The value of the attribute, if it is present.
             This will otherwise return `None`.
         """
         if base is not None:
