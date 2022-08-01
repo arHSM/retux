@@ -3,6 +3,7 @@ from enum import IntEnum, IntFlag
 from attrs import define, field
 from retux.client.resources.abc import Snowflake, Object, Partial
 from .application import Application
+from .sticker import Sticker, StickerItem
 from .user import User
 from .role import Role
 from ...utils.converters import optional_c, list_c
@@ -2043,10 +2044,8 @@ class Message(Object):
     """# The thread of the message, if it is the message that started a thread."""
     # TODO: Implement Component object.
     # components: list[dict] | list[Component] | None = field(converter=optional_c(list_c(Component)), default=None)
-    """# The components on a message."""
-    # TODO: Implement StickerItem object.
-    # sticker_items: list[dict] | list[StickerItem] | None = field(converter=optional_c(list_c(StickerItem)))
-    """# The items used to begin rendering the message's stickers."""
-    # TODO: Implement stickers
-    # stickers: list[dict] | list[Sticker] | None = field(converter=optional_c(list_c(Sticker)))
-    """# The stickers of a message."""
+    # """The components on a message."""
+    sticker_items: list[dict] | list[StickerItem] | None = field(converter=optional_c(list_c(StickerItem)), default=None)
+    """The items used to begin rendering the message's stickers."""
+    stickers: list[dict] | list[Sticker] | None = field(converter=optional_c(list_c(Sticker)), default=None)
+    """The stickers of a message."""
