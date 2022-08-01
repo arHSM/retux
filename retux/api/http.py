@@ -24,6 +24,7 @@ class _RouteMethod(Enum):
     POST = "POST"
     PUT = "PUT"
     DELETE = "DELETE"
+    PATCH = "PATCH"
 
 
 @define(slots=False)
@@ -155,7 +156,9 @@ class HTTPClient(HTTPProtocol):
             f"httpx/{__http_version__}",
         }
 
-    async def request(self, route: _Route, payload: dict, retries: NotNeeded[int] = MISSING):
+    async def request(
+        self, route: _Route, payload: dict | None = None, retries: NotNeeded[int] = MISSING
+    ):
         """
         Makes a request to Discord's REST API.
 
@@ -217,7 +220,7 @@ class HTTPClient(HTTPProtocol):
                         resp = await client.request(
                             route.method.value,
                             str(route),
-                            params=QueryParams(**payload),
+                            params=QueryParams(**payload) if payload else None,
                         )
 
                     json = resp.json()

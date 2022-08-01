@@ -6,6 +6,7 @@ from .application import Application
 from .user import User
 from .role import Role
 from ...utils.converters import optional_c, list_c
+from ..mixins import Respondable
 
 __all__ = (
     "Channel",
@@ -1384,7 +1385,7 @@ class ThreadChannel(Partial, Object):
 
 
 @define(kw_only=True)
-class Channel(Object):
+class Channel(Object, Respondable):
     """
     Represents a channel from Discord.
 
@@ -1573,6 +1574,15 @@ class Channel(Object):
     """
     flags: int | ChannelFlags | None = field(converter=ChannelFlags, default=None)
     """Channel flags combined as a bitfield."""
+
+    async def send(self, bot: Bot, content: str | None = None) -> "Message":  # noqa
+        resp = await super().send(
+            bot,
+            f"/channels/{self.id}/messages",
+            content=content,
+        )
+        # TODO: complete everything when everything is implemented, this is an example for now
+        return Message(**resp)
 
 
 @define(kw_only=True)
