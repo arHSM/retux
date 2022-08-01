@@ -31,7 +31,7 @@ def optional_c(converter: Callable) -> Callable[..., Any]:
     return optional_converter
 
 
-def list_c(func: Any) -> list[Any]:
+def list_c(func: Any) -> Callable[..., list[Any]]:
     """
     Handles conversion for values nested inside of a list.
 
