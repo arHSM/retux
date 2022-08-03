@@ -192,7 +192,7 @@ class StickerItem(Object):
     """The type of formatting of the sticker being represented."""
 
 
-@define(kwargs_only=True)
+@define(kw_only=True)
 class StickerPack(Object):
     """
     Represents a sticker pack from Discord.
@@ -216,7 +216,7 @@ class StickerPack(Object):
     """
     id: str | Snowflake = field(converter=Snowflake)
     """The ID of the sticker pack."""
-    stickers: list[dict] | list[Sticker] = field(list_c(Sticker))
+    stickers: list[dict] | list[Sticker] = field(converter=list_c(Sticker))
     """The stickers within the sticker pack."""
     name: str = field()
     """The name of the sticker pack."""
