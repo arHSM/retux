@@ -24,6 +24,8 @@ __all__ = (
     "GuildNSFWLevel",
     "ExplicitContentFilterLevel",
     "VerificationLevel",
+    "Member",
+    "GuildWidgetSettings",
 )
 
 
