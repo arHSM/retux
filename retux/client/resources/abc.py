@@ -1,9 +1,10 @@
 from datetime import datetime
+from enum import Enum
 from typing import Union
 
 from attrs import define, field
 
-__all__ = ("Snowflake", "Partial", "Object", "Component")
+__all__ = ("Snowflake", "Image", "Partial", "Object", "Component")
 
 
 @define(repr=False, eq=False)
@@ -95,6 +96,307 @@ class Snowflake:
         """
         return int(self._snowflake) & 0xFFF
 
+
+class CDNEndpoint(Enum):
+    """
+    Represents all of the different Discord
+    CDN endpoints.
+
+    Constants
+    ---------
+    CUSTOM_EMOJI
+        The endpoint for custom emojis.
+        
+        The extra id is the emoji's ID.
+    GUILD_ICON
+        The endpoint for guild icons.
+        
+        The extra id is the guild's ID.
+        Guild icons can be animated.
+    GUILD_SPLASH
+        The endpoint for guild splashes.
+        
+        The extra id is the guild's ID.
+    GUILD_DISCOVERY_SPLASH
+        The endpoint for guild discovery splashes.
+        
+        The extra id is the guild's ID.
+    GUILD_BANNER
+        The endpoint for guild banners.
+        
+        The extra id is the guild's ID.
+    Guild banners can be animated.
+    USER_BANNER
+        The endpoint for user banners.
+        
+        The extra id is the user's ID.
+    User banners can be animated.
+    DEFAULT_USER_AVATAR
+        The endpoint for the default avatars of users.
+        
+        The  extra id is the modulo 5 of
+        the user's discriminator. The size param is 
+        ignored for this endpoint.
+    USER_AVATAR
+        The endpoint for user avatars.
+        
+        The extra id is the user's ID.
+        User avatars can be animated
+    GUILD_MEMBER_AVATAR
+        The endpoint for guild-specific member avatars.
+        
+        The extra ids are the guild's ID 
+        and the user's ID. These can be animated.
+    APPLICATION_ICON
+        The endpoint for application icons.
+        
+        The extra id is the application's ID.
+    APPLICATION_COVER
+        The endpoint for application covers.
+        
+        The extra id is the application's ID.
+    APPLICATION_ASSET
+        The endpoint for application assets.
+        
+        The extra id is the applciation's ID.
+    ACHIEVEMENT_ICON
+        The endpoint for application icons.
+        
+        The extra id is the application's ID.
+    STICKER_PACK_BANNER
+        The endpoint for sticker pack banners.
+        
+        The extra id is the sticker pack
+        banner asset's ID.
+    TEAM_ICON
+        The endpoint for team icons.
+        
+        The extra id is the team's ID.
+    STICKER
+        The endpoint for stickers.
+        
+        The extra id is the sticker's ID.
+        The size parameter is ignored. Stickers can
+        be animated.
+    ROLE_ICON
+        The endpoint for role icons.
+        
+        The extra id is the role's ID.
+    GUILD_SCHEDULED_EVENT_COVER
+        The endpoint for guild scheduled event covers.
+        
+        The extra id is the guild's ID.
+    GUILD_MEMBER_BANNER
+        The endpoint for guild member banners.
+        
+        The extra ids are the guild's ID
+        and the user's ID.
+    """
+    CUSTOM_EMOJI = "emojis/{}"
+    """
+    The endpoint for custom emojis.
+    
+    The extra id is the emoji's ID.
+    """
+    GUILD_ICON = "icons/{}/{hash}"
+    """
+    The endpoint for guild icons.
+    
+    The extra id is the guild's ID.
+    Guild icons can be animated.
+    """
+    GUILD_SPLASH = "splashes/{}/{hash}"
+    """
+    The endpoint for guild splashes.
+    
+    The extra id is the guild's ID.
+    """
+    GUILD_DISCOVERY_SPLASH = "discovery-splashes/{}/{hash}"
+    """
+    The endpoint for guild discovery splashes.
+    
+    The extra id is the guild's ID.
+    """
+    GUILD_BANNER = "banners/{}/{hash}"
+    """
+    The endpoint for guild banners.
+    
+    The extra id is the guild's ID.
+    Guild banners can be animated.
+    """
+    USER_BANNER = "banners/{}/{hash}"
+    """
+    The endpoint for user banners.
+    
+    The extra id is the user's ID.
+    User banners can be animated.
+    """
+    DEFAULT_USER_AVATAR = "embed/avatars/{}"
+    """
+    The endpoint for the default avatars of users.
+    
+    The  extra id is the modulo 5 of
+    the user's discriminator. The size param is 
+    ignored for this endpoint.
+    """
+    USER_AVATAR = "avatars/{}/{hash}"
+    """
+    The endpoint for user avatars.
+    
+    The extra id is the user's ID.
+    User avatars can be animated
+    """
+    GUILD_MEMBER_AVATAR = "guilds/{}/users/{}/avatars/{hash}"
+    """
+    The endpoint for guild-specific member avatars.
+    
+    The extra ids are the guild's ID 
+    and the user's ID. These can be animated.
+    """
+    APPLICATION_ICON = "app-icons/{}/{hash}"
+    """
+    The endpoint for application icons.
+    
+    The extra id is the application's ID.
+    """
+    APPLICATION_COVER = "app-icons/{}/{hash}"
+    """
+    The endpoint for application covers.
+    
+    The extra id is the application's ID.
+    """
+    APPLICATION_ASSET = "app-assets/{}/{hash}"
+    """
+    The endpoint for application assets.
+    
+    The extra id is the applciation's ID.
+    """
+    ACHIEVEMENT_ICON = "app-assests/{}/{hash}"
+    """
+    The endpoint for application icons.
+    
+    The extra id is the application's ID.
+    """
+    STICKER_PACK_BANNER = "app-assets/710982414301790216/store/{}"
+    """
+    The endpoint for sticker pack banners.
+    
+    The extra id is the sticker pack
+    banner asset's ID.
+    """
+    TEAM_ICON = "team-icons/{}/{hash}"
+    """
+    The endpoint for team icons.
+    
+    The extra id is the team's ID.
+    """
+    STICKER = "stickers/{hash}"
+    """
+    The endpoint for stickers.
+    
+    The extra id is the sticker's ID.
+    The size parameter is ignored. Stickers can
+    be animated.
+    """
+    ROLE_ICON = "role-icons/{}/{hash}"
+    """
+    The endpoint for role icons.
+    
+    The extra id is the role's ID.
+    """
+    GUILD_SCHEDULED_EVENT_COVER = "guild-events/{}/{hash}"
+    """
+    The endpoint for guild scheduled event covers.
+    
+    The extra id is the guild's ID.
+    """
+    GUILD_MEMBER_BANNER = "guilds/{}/users/{}/banners/{hash}"
+    """
+    The endpoint for guild member banners.
+    
+    The extra ids are the guild's ID
+    and the user's ID.
+    """
+
+
+@define(kw_only=True)
+class Image:
+    """
+    Represents an image from Discord.
+
+    Attributes
+    ----------
+    hash : `str`, optional
+        The hash of the image.
+    
+    Methods
+    -------
+    animated : `bool`
+        Whether or not the image is animated.
+    path : `str`
+        The path to the image in CDN.
+    url : `str`
+        The url to the image.
+    """
+    hash: str | None = field(default=None)
+    """The hash of the image."""
+    _endpoint: CDNEndpoint = field()
+    """The endpoint of the image."""
+    _ids: list | None = field(default=None)
+    """
+    The needed variables aside 
+    from the hash for the endpoint.
+    """
+
+    def _c(endpoint: CDNEndpoint):
+        """
+        For internal use only.
+
+        Builds an attrs converter for Images.
+        A `__post_attrs_init__` must be used
+        to add extra variables needed in the
+        endpoint such as ids. This is only 
+        meant for endpoints that need a hash.
+        
+        Please note that the naming of this method, `_c`
+        does not reflect the same serialisation methods
+        or strategies as `Serialisable._c()`.
+
+        Parameters
+        ----------
+        endpoint : CDNEndpoint
+            The endpoint of the image.
+        
+        Returns
+        -------
+        `function`
+            A function that takes one argument
+            (the hash). Compatible with attrs.
+        """
+        def inner(hash: str):
+            return Image(hash=hash, endpoint=endpoint)
+        return inner
+    
+    @property
+    def animated(self) -> bool:
+        """Whether or not the image is animated."""
+        return self.hash and self.hash.startswith("a_")
+
+    @property
+    def path(self) -> str:
+        """The path to the image in CDN."""
+        if not self._ids:
+            raise RuntimeError("Tried to access image endpoint without needed ids.")
+        if "{hash}" in self._endpoint.value:
+            return self._endpoint.value.format(*self._ids, hash=self.hash)
+        else:
+            return self._endpoint.value.format(*self._ids)
+
+    @property
+    def url(self) -> str:
+        """The url to the image."""
+        return f"https://cdn.discordapp.com/{self.path}"
+    
 
 @define()
 class Partial:
