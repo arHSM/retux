@@ -512,6 +512,9 @@ class GatewayClient(GatewayProtocol):
                 # that the associated dataclass doesn't have as a listed attrib.
                 for kwarg in kwargs:
                     if kwarg not in sanitised_data:
+                        logger.debug(
+                            f"Field {kwarg} found missing from {type(data)}, removing from dispatch."
+                        )
                         del kwargs[kwarg]
 
                 await bot._trigger(
