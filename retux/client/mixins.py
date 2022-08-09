@@ -200,13 +200,12 @@ class Serializable:
     -------
     _c(json: dict) : `object`
         Converts a `dict provided by Discord to an instance
-        of the class. Used for compatibility with attrs 
-        converters.
+        of the class.
     """
     @classmethod
     def _c(cls, json: dict) -> object:
         """
-        Converts a `dict provided by Discord to an instance
+        Converts a `dict` provided by Discord to an instance
         of the class.
 
         Parameters
