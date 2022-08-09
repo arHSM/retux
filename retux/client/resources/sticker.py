@@ -8,21 +8,22 @@ from ...utils.converters import list_c, optional_c
 class StickerType(IntEnum):
     """
     Represents the types of stickers from Discord.
-    
+
     Constants
     ---------
     STANDARD
-        An official sticker of a pack. 
-    
+        An official sticker of a pack.
+
         Only availible with Nitro unless
         part of a removed purchaseable pack.
     GUILD
         A sticker uploaded by a guild.
     """
+
     STANDARD = 1
     """
-    An official sticker of a pack. 
-    
+    An official sticker of a pack.
+
     Only availible with Nitro unless
     part of a removed purchaseable pack.
     """
@@ -33,7 +34,7 @@ class StickerType(IntEnum):
 class StickerFormatType(IntEnum):
     """
     Represents the types of sticker formats from Discord.
-    
+
     Constants
     ---------
     PNG
@@ -43,6 +44,7 @@ class StickerFormatType(IntEnum):
     LOTTIE
         A sticker formatted with the `.lottie` format.
     """
+
     PNG = 1
     """A sticker formatted with the `.png` format."""
     APNG = 2
@@ -73,7 +75,7 @@ class Sticker(Object):
         The tags or emoji equivelent of a sticker.
 
         If the sticker is a standard sticker, this
-        field will be a comma seperated list of 
+        field will be a comma seperated list of
         keywords. If the sticker is guild owned, it
         will be the name of an emoji.
     asset : `str`
@@ -103,12 +105,13 @@ class Sticker(Object):
         Will only be availible if the sticker is
         part of a pack and owned by Discord.
     """
+
     id: str | Snowflake = field(converter=Snowflake)
     """The ID of the sticker."""
     pack_id: str | Snowflake | None = field(converter=optional_c(Snowflake), default=None)
     """
     The ID of the pack containing the sticker.
-    
+
     Only standard stickers owned by Discord
     can be part of a sticker pack.
     """
@@ -119,9 +122,9 @@ class Sticker(Object):
     tags: str = field()
     """
     The tags or emoji equivelent of a sticker.
-    
+
     If the sticker is a standard sticker, this
-    field will be a comma seperated list of 
+    field will be a comma seperated list of
     keywords. If the sticker is guild owned, it
     will be the name of an emoji.
     """
@@ -134,21 +137,21 @@ class Sticker(Object):
     available: bool = field(default=True)
     """
     Whether or not the sticker is availible.
-    
+
     May be false if the guild that owns it
     has lost a level of boosting.
     """
     guild_id: str | Snowflake | None = field(converter=optional_c(Snowflake), default=None)
     """
     The ID of the guild that owns the sticker.
-    
+
     Will only be set to None if the sticker is
     owned by Discord.
     """
     user: dict | User | None = field(converter=optional_c(User), default=None)
     """
     The user that uploaded the sticker.
-    
+
     Will only be set to None if the sticker is
     owned by Discord.
     """
@@ -159,22 +162,24 @@ class Sticker(Object):
     Will only be availible if the sticker is
     part of a pack and owned by Discord.
     """
+
     @property
     async def clean_tags(self):
         """
         A clean list of tags, formatted from the `tags` attribute.
-        
+
         Only availible on standard stickers.
         """
         if self.type == StickerType.STANDARD:
             return self.tags.split(", ")
 
+
 @define(kw_only=True)
 class StickerItem(Object):
     """
-    Represents the bare information needed 
+    Represents the bare information needed
     to begin loading a sticker from Discord.
-    
+
     Attributes
     ----------
     id : `Snowflake`
@@ -184,6 +189,7 @@ class StickerItem(Object):
     format_type : `StickerFormatType`
         The type of formatting of the sticker being represented.
     """
+
     id: str | Snowflake = field(converter=Snowflake)
     """The ID of the sticker being represented."""
     name: str = field()
@@ -214,6 +220,7 @@ class StickerPack(Object):
     banner_asset_id : `Snowflake`, optional
         The ID of the sticker packs's banner image.
     """
+
     id: str | Snowflake = field(converter=Snowflake)
     """The ID of the sticker pack."""
     stickers: list[dict] | list[Sticker] = field(converter=list_c(Sticker))

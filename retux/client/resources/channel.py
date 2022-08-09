@@ -2045,7 +2045,11 @@ class Message(Object):
     # TODO: Implement Component object.
     # components: list[dict] | list[Component] | None = field(converter=optional_c(list_c(Component)), default=None)
     # """The components on a message."""
-    sticker_items: list[dict] | list[StickerItem] | None = field(converter=optional_c(list_c(StickerItem)), default=None)
+    sticker_items: list[dict] | list[StickerItem] | None = field(
+        converter=optional_c(list_c(StickerItem)), default=None
+    )
     """The items used to begin rendering the message's stickers."""
-    stickers: list[dict] | list[Sticker] | None = field(converter=optional_c(list_c(Sticker)), default=None)
+    stickers: list[dict] | list[Sticker] | None = field(
+        converter=optional_c(list_c(Sticker)), default=None
+    )
     """The stickers of a message."""

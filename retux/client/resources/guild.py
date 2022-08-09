@@ -493,7 +493,9 @@ class GuildPreview(Object):
     The description of the guild being previewed, if presently
     determined as a Community server.
     """
-    stickers: list[dict] | list[Sticker] | None = field(converter=optional_c(list_c(Sticker)), default=None)
+    stickers: list[dict] | list[Sticker] | None = field(
+        converter=optional_c(list_c(Sticker)), default=None
+    )
     """The stickers of the guild being previewed."""
 
 
