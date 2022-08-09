@@ -24,6 +24,7 @@ from .events.connection import HeartbeatAck, InvalidSession, Ready, Reconnect, R
 from ..client.flags import Intents
 from ..client.resources.abc import Snowflake
 from ..const import MISSING, NotNeeded, __gateway_url__
+from ..utils.validators import dataclass_v
 
 logger = getLogger(__name__)
 
@@ -504,6 +505,15 @@ class GatewayClient(GatewayProtocol):
             if isinstance(data, dict) or isinstance(data, MISSING):
                 await bot._trigger(_name.lower(), data)
             else:
+                sanitised_data = dataclass_v(data)
+
+                # TODO: create a better dataclass validator for sanitising values.
+                # This is simply deleting anything the Gateway gives us for the event
+                # that the associated dataclass doesn't have as a listed attrib.
+                for kwarg in kwargs:
+                    if kwarg not in sanitised_data:
+                        del kwargs[kwarg]
+
                 await bot._trigger(
                     _name.lower(),
                     data(
