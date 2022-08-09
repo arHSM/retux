@@ -188,3 +188,35 @@ class Controllable:
         """
         route = _Route(method=_RouteMethod.GET, path=path)
         return await bot.http.request(route, payload=query_params)
+
+
+class Serializable:
+    """
+    A mixin for structures that need to be generated from a `dict`.
+
+    This class exists to simplify compatibility with attrs converters.
+
+    Methods
+    -------
+    _c(json: dict) : `object`
+        Converts a `dict provided by Discord to an instance
+        of the class. Used for compatibility with attrs 
+        converters.
+    """
+    @classmethod
+    def _c(cls, json: dict) -> object:
+        """
+        Converts a `dict provided by Discord to an instance
+        of the class.
+
+        Parameters
+        ----------
+        json : `dict`
+            A `dict` representing data from Discord.
+        
+        Returns
+        -------
+        `object`
+            An instance of the class.
+        """
+        return cls(**json)
