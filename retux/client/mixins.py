@@ -198,7 +198,7 @@ class Serializable:
 
     Methods
     -------
-    _c(json: dict) : `object`
+    _c() : `object`
         Converts a `dict provided by Discord to an instance
         of the class.
     """
