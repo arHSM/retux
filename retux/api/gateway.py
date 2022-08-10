@@ -23,6 +23,7 @@ from .events.connection import HeartbeatAck, InvalidSession, Ready, Reconnect, R
 
 from ..client.flags import Intents
 from ..client.resources.abc import Snowflake
+from ..client.mixins import Serializable
 from ..const import MISSING, NotNeeded, __gateway_url__
 from ..utils.validators import dataclass_v
 
@@ -45,8 +46,6 @@ class _GatewayMeta:
     """The ID of an existent session, used for when resuming a lost connection."""
     seq: int | None = field(default=None)
     """The sequence number on an existent session."""
-    resume_gateway_url: str | None = field(default=None)
-    """The URL of the Gateway upon resuming an existing connection."""
 
 
 class _GatewayOpCode(IntEnum):
@@ -322,7 +321,7 @@ class GatewayClient(GatewayProtocol):
         # may modify their GatewayClient to their liking.
 
         async with open_websocket_url(
-            f"{self._meta.resume_gateway_url or __gateway_url__}?v={self._meta.version}&encoding={self._meta.encoding}"
+            f"{__gateway_url__}?v={self._meta.version}&encoding={self._meta.encoding}"
             f"{'' if self._meta.compress is None else f'&compress={self._meta.compress}'}"
         ) as self._conn:
             self._closed = bool(self._conn.closed)
@@ -419,8 +418,7 @@ class GatewayClient(GatewayProtocol):
                     logger.debug(
                         "The Gateway has told us to reconnect. Resuming last known connection."
                     )
-                    await self._conn.aclose()
-                    await self.reconnect()
+                    await self._resume()
                 else:
                     logger.debug(
                         "The given connection cannot be reconnected to. Starting new connection."
@@ -431,8 +429,7 @@ class GatewayClient(GatewayProtocol):
             case _GatewayOpCode.RECONNECT:
                 logger.info("The Gateway has told us to reconnect. Resuming last known connection.")
                 await self._dispatch("RECONNECT", Reconnect)
-                await self._conn.aclose()
-                await self.reconnect()
+                await self._resume()
             case _GatewayOpCode.DISPATCH:
                 if payload.name not in ["RESUMED", "READY"]:
                     resource = _EventTable.lookup(payload.name, payload.data)
@@ -446,7 +443,6 @@ class GatewayClient(GatewayProtocol):
             case "READY":
                 self._meta.session_id = payload.data["session_id"]
                 self._meta.seq = payload.sequence
-                self._meta.resume_gateway_url = payload.data["resume_gateway_url"]
                 logger.debug(
                     f"The Gateway has declared a ready connection. (session: {self._meta.session_id}, sequence: {self._meta.seq}"
                 )
@@ -476,7 +472,7 @@ class GatewayClient(GatewayProtocol):
         self._bots.append(bot)
 
     async def _dispatch(
-        self, _name: str, data: list[dict] | dict | _Event | MISSING, *args, **kwargs
+        self, _name: str, data: list[dict] | dict | Serializable | MISSING, *args, **kwargs
     ):
         """
         Dispatches an event from the Gateway.
@@ -498,7 +494,7 @@ class GatewayClient(GatewayProtocol):
         ----------
         _name : `str`
             The name of the event.
-        data : `dict`, `_Event`, `MISSING`
+        data : `dict`, `Serializable`, `MISSING`
             The supplied payload data from the event.
 
             If a resource was not able to be found for
@@ -510,26 +506,11 @@ class GatewayClient(GatewayProtocol):
             if isinstance(data, dict) or isinstance(data, MISSING):
                 await bot._trigger(_name.lower(), data)
             else:
-                sanitised_data = dataclass_v(data)
-
-                # TODO: create a better dataclass validator for sanitising values.
-                # This is simply deleting anything the Gateway gives us for the event
-                # that the associated dataclass doesn't have as a listed attrib.
-                for kwarg in kwargs:
-                    if kwarg not in sanitised_data:
-                        logger.debug(
-                            f"Field {kwarg} found missing from {type(data)}, removing from dispatch."
-                        )
-                        del kwargs[kwarg]
-
+                if "id" in data.__dict__:
+                    kwargs["bot_inst"] = bot
                 await bot._trigger(
                     _name.lower(),
-                    data(
-                        _name.lower(),
-                        bot if "id" in kwargs else MISSING,
-                        *args,
-                        **{k: v for k, v in kwargs.items() if not k.startswith("_")},
-                    ),
+                    data._c(kwargs),
                 )
 
     async def _identify(self):

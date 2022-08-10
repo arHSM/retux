@@ -1,4 +1,5 @@
 from ..api.http import _Route, _RouteMethod
+from ..utils.validators import dataclass_v
 
 from attrs import asdict
 
@@ -218,4 +219,6 @@ class Serializable:
         `object`
             An instance of the class.
         """
-        return cls(**json)
+        allowed = dataclass_v(cls)
+
+        return cls(**{k: v for k, v in json.items() if k in allowed})
