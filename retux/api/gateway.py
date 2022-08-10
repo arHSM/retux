@@ -45,6 +45,8 @@ class _GatewayMeta:
     """The ID of an existent session, used for when resuming a lost connection."""
     seq: int | None = field(default=None)
     """The sequence number on an existent session."""
+    resume_gateway_url: str | None = field(default=None)
+    """The URL of the Gateway upon resuming an existing connection."""
 
 
 class _GatewayOpCode(IntEnum):
@@ -320,7 +322,7 @@ class GatewayClient(GatewayProtocol):
         # may modify their GatewayClient to their liking.
 
         async with open_websocket_url(
-            f"{__gateway_url__}?v={self._meta.version}&encoding={self._meta.encoding}"
+            f"{self._meta.resume_gateway_url or __gateway_url__}?v={self._meta.version}&encoding={self._meta.encoding}"
             f"{'' if self._meta.compress is None else f'&compress={self._meta.compress}'}"
         ) as self._conn:
             self._closed = bool(self._conn.closed)
@@ -417,7 +419,8 @@ class GatewayClient(GatewayProtocol):
                     logger.debug(
                         "The Gateway has told us to reconnect. Resuming last known connection."
                     )
-                    await self._resume()
+                    await self._conn.aclose()
+                    await self.reconnect()
                 else:
                     logger.debug(
                         "The given connection cannot be reconnected to. Starting new connection."
@@ -428,7 +431,8 @@ class GatewayClient(GatewayProtocol):
             case _GatewayOpCode.RECONNECT:
                 logger.info("The Gateway has told us to reconnect. Resuming last known connection.")
                 await self._dispatch("RECONNECT", Reconnect)
-                await self._resume()
+                await self._conn.aclose()
+                await self.reconnect()
             case _GatewayOpCode.DISPATCH:
                 if payload.name not in ["RESUMED", "READY"]:
                     resource = _EventTable.lookup(payload.name, payload.data)
@@ -442,6 +446,7 @@ class GatewayClient(GatewayProtocol):
             case "READY":
                 self._meta.session_id = payload.data["session_id"]
                 self._meta.seq = payload.sequence
+                self._meta.resume_gateway_url = payload.data["resume_gateway_url"]
                 logger.debug(
                     f"The Gateway has declared a ready connection. (session: {self._meta.session_id}, sequence: {self._meta.seq}"
                 )
