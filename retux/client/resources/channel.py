@@ -7,7 +7,7 @@ from .sticker import Sticker, StickerItem
 from .user import User
 from .role import Role
 from ...utils.converters import optional_c, list_c
-from ..mixins import Respondable
+from ..mixins import Respondable, Serializable
 
 __all__ = (
     "Channel",
@@ -284,7 +284,7 @@ class MessageFlags(IntFlag):
 
 
 @define(kw_only=True)
-class Reaction:
+class Reaction(Serializable):
     """
     Represents a reaction to a message from Discord.
 
@@ -303,12 +303,12 @@ class Reaction:
     me: bool = field()
     """Whether or not the current user has reacted using this emoji."""
     # TODO: Implement Partial Emoji object.
-    # emoji: PartialEmoji = field(converter=PartialEmoji)
+    # emoji: PartialEmoji = field(converter=PartialEmoji._c)
     """Information about the emoji of the reaction."""
 
 
 @define(kw_only=True)
-class Overwrite(Object):
+class Overwrite(Object, Serializable):
     """
     Represents a permission overwrite from Discord.
 
@@ -341,7 +341,7 @@ class Overwrite(Object):
 
 
 @define(kw_only=True)
-class MessageActivity:
+class MessageActivity(Serializable):
     """
     Represents a message activity structure from Discord.
 
@@ -360,7 +360,7 @@ class MessageActivity:
 
 
 @define(kw_only=True)
-class MessageReference:
+class MessageReference(Serializable):
     """
     Represents a reference to a message from Discord.
 
@@ -393,7 +393,7 @@ class MessageReference:
 
 
 @define(kw_only=True)
-class FollowedChannel:
+class FollowedChannel(Serializable):
     """
     Represents a followed channel from Discord.
 
@@ -412,7 +412,7 @@ class FollowedChannel:
 
 
 @define(kw_only=True)
-class ChannelMention(Object):
+class ChannelMention(Object, Serializable):
     """
     Represents a channel mentioned in a message from Discord.
 
@@ -439,7 +439,7 @@ class ChannelMention(Object):
 
 
 @define(kw_only=True)
-class ThreadMetadata:
+class ThreadMetadata(Serializable):
     """
     Represents a thread metadata structure from Discord.
 
@@ -500,7 +500,7 @@ class ThreadMetadata:
 
 
 @define(kw_only=True)
-class ThreadMember(Object):
+class ThreadMember(Object, Serializable):
     """
     Represents a thread member structure from Discord.
 
@@ -545,7 +545,7 @@ class ThreadMember(Object):
 
 
 @define(kw_only=True)
-class TextChannel(Partial, Object):
+class TextChannel(Partial, Object, Serializable):
     """
     Represents a text channel from Discord.
 
@@ -629,7 +629,7 @@ class TextChannel(Partial, Object):
 
     id: str | Snowflake = field(converter=Snowflake)
     """The ID of the channel."""
-    guild_id: str | Snowflake | None = field(default=None, converter=Snowflake)
+    guild_id: str | Snowflake | None = field(converter=optional_c(Snowflake), default=None)
     """
     The ID of the guild.
 
@@ -638,7 +638,7 @@ class TextChannel(Partial, Object):
     """
     position: int | None = field(default=None)
     """Sorted position of the channel."""
-    permission_overwrites: list[dict] | list[Overwrite] | None = field(default=None)
+    permission_overwrites: list[dict] | list[Overwrite] | None = field(converter=optional_c(list_c(Overwrite._c)), default=None)
     """Explicit permission overwrites for members and roles."""
     name: str | None = field(default=None)
     """
@@ -654,7 +654,7 @@ class TextChannel(Partial, Object):
     """
     nsfw: bool | None = field(default=False)
     """Whether or not the channel is NSFW. Defaults to `False`."""
-    last_message_id: str | Snowflake | None = field(converter=Snowflake, default=None)
+    last_message_id: str | Snowflake | None = field(converter=optional_c(Snowflake), default=None)
     """
     The ID of the last message sent in this channel.
 
@@ -666,7 +666,7 @@ class TextChannel(Partial, Object):
 
     Can be a number up to 21600. Bots, as well as users with the permission manage_messages or manage_channel, are unaffected.
     """
-    recipients: list[dict] | list[User] | None = field(default=None)
+    recipients: list[dict] | list[User] | None = field(converter=optional_c(list_c(User._c)), default=None)
     """The recipients of the dm."""
     icon: str | None = field(default=None)
     """The hash for the channel's icon."""
@@ -695,13 +695,11 @@ class TextChannel(Partial, Object):
 
     Stops counting at `50`.
     """
-    # TODO: implement Thread Metadata object.
     thread_metadata: dict | ThreadMetadata | None = field(  # noqa
-        converter=ThreadMetadata, default=None  # noqa
+        converter=optional_c(ThreadMetadata._c), default=None  # noqa
     )  # noqa
     """Thread-specific fields not needed by other channels."""
-    # TODO: implement Thread Member object.
-    member: dict | ThreadMember | None = field(converter=ThreadMember, default=None)  # noqa
+    member: dict | ThreadMember | None = field(converter=optional_c(ThreadMember._c), default=None)  # noqa
     """
     The thread member representation of the user if they have joined the thread.
 
@@ -967,7 +965,7 @@ class DMChannel(TextChannel):
 
 
 @define(kw_only=True)
-class VoiceChannel(Partial, Object):
+class VoiceChannel(Partial, Object, Serializable):
     """
     Represents a voice channel from Discord.
 
@@ -1055,7 +1053,7 @@ class VoiceChannel(Partial, Object):
 
     id: str | Snowflake = field(converter=Snowflake)
     """The ID of the channel."""
-    guild_id: str | Snowflake | None = field(default=None, converter=Snowflake)
+    guild_id: str | Snowflake | None = field(converter=Snowflake, default=None)
     """
     The ID of the guild.
 
@@ -1064,7 +1062,7 @@ class VoiceChannel(Partial, Object):
     """
     position: int | None = field(default=None)
     """Sorted position of the channel."""
-    permission_overwrites: list[dict] | list[Overwrite] | None = field(default=None)
+    permission_overwrites: list[dict] | list[Overwrite] | None = field(converter=optional_c(list_c(Overwrite._c)), default=None)
     """Explicit permission overwrites for members and roles."""
     name: str | None = field(default=None)
     """
@@ -1074,7 +1072,7 @@ class VoiceChannel(Partial, Object):
     """
     nsfw: bool | None = field(default=False)
     """Whether or not the channel is NSFW. Defaults to `False`."""
-    last_message_id: str | Snowflake | None = field(converter=Snowflake, default=None)
+    last_message_id: str | Snowflake | None = field(converter=optional_c(Snowflake), default=None)
     """
     The ID of the last message sent in this channel.
 
@@ -1092,11 +1090,11 @@ class VoiceChannel(Partial, Object):
     """
     icon: str | None = field(default=None)
     """The hash for the channel's icon."""
-    owner_id: str | Snowflake | None = field(converter=Snowflake, default=None)
+    owner_id: str | Snowflake | None = field(converter=optional_c(Snowflake), default=None)
     """The ID of the creator of the group dm or thread."""
-    application_id: str | Snowflake | None = field(converter=Snowflake, default=None)
+    application_id: str | Snowflake | None = field(converter=optional_c(Snowflake), default=None)
     """The ID of the application that created the dm if it is bot-created."""
-    parent_id: str | Snowflake | None = field(converter=Snowflake, default=None)
+    parent_id: str | Snowflake | None = field(converter=optional_c(Snowflake), default=None)
     """
     The ID of the parent of the channel
 
@@ -1107,7 +1105,7 @@ class VoiceChannel(Partial, Object):
     rtc_region: str | None = field(default=None)
     """The channel's voice region ID if present, set to automatic when left as `None`."""
     video_quality_mode: int | VideoQualityMode | None = field(
-        converter=VideoQualityMode, default=None
+        converter=optional_c(VideoQualityMode), default=None
     )
     """The video quality mode of the voice channel."""
     message_count: int | None = field(default=None)
@@ -1122,13 +1120,11 @@ class VoiceChannel(Partial, Object):
 
     Stops counting at `50`.
     """
-    # TODO: implement Thread Metadata object.
     thread_metadata: dict | ThreadMetadata | None = field(  # noqa
-        converter=ThreadMetadata, default=None  # noqa
+        converter=optional_c(ThreadMetadata._c), default=None  # noqa
     )  # noqa
     """Thread-specific fields not needed by other channels."""
-    # TODO: implement Thread Member object.
-    member: dict | ThreadMember | None = field(converter=ThreadMember, default=None)  # noqa
+    member: dict | ThreadMember | None = field(converter=optional_c(ThreadMember._c), default=None)  # noqa
     """
     The thread member representation of the user if they have joined the thread.
 
@@ -1146,12 +1142,12 @@ class VoiceChannel(Partial, Object):
 
     Only included when part of the resolved data received on a slash command interaction.
     """
-    flags: int | ChannelFlags | None = field(converter=ChannelFlags, default=None)
+    flags: int | ChannelFlags | None = field(converter=optional_c(ChannelFlags), default=None)
     """Channel flags combined as a bitfield."""
 
 
 @define(kw_only=True)
-class StageChannel(Partial, Object):
+class StageChannel(Partial, Object, Serializable):
     """
     Represents a stage channel from Discord.
 
@@ -1203,7 +1199,7 @@ class StageChannel(Partial, Object):
     """The ID of the channel."""
     type: int | ChannelType = field(converter=ChannelType)
     """The type of the channel."""
-    guild_id: str | Snowflake | None = field(default=None, converter=Snowflake)
+    guild_id: str | Snowflake | None = field(default=None, converter=optional_c(Snowflake))
     """
     The ID of the guild.
 
@@ -1222,7 +1218,7 @@ class StageChannel(Partial, Object):
     """The bitrate of the voice channel."""
     icon: str | None = field(default=None)
     """The hash for the channel's icon."""
-    parent_id: str | Snowflake | None = field(converter=Snowflake, default=None)
+    parent_id: str | Snowflake | None = field(converter=optional_c(Snowflake), default=None)
     """
     The ID of the parent of the channel
 
@@ -1234,12 +1230,12 @@ class StageChannel(Partial, Object):
 
     Only included when part of the resolved data received on a slash command interaction.
     """
-    flags: int | ChannelFlags | None = field(converter=ChannelFlags, default=None)
+    flags: int | ChannelFlags | None = field(converter=optional_c(ChannelFlags), default=None)
     """Channel flags combined as a bitfield."""
 
 
 @define(kw_only=True)
-class ThreadChannel(Partial, Object):
+class ThreadChannel(Partial, Object, Serializable):
     """
     Represents a thread channel from Discord.
 
@@ -1309,7 +1305,7 @@ class ThreadChannel(Partial, Object):
 
     id: str | Snowflake = field(converter=Snowflake)
     """The ID of the channel."""
-    guild_id: str | Snowflake | None = field(default=None, converter=Snowflake)
+    guild_id: str | Snowflake | None = field(converter=optional_c(Snowflake), default=None)
     """
     The ID of the guild.
 
@@ -1322,7 +1318,7 @@ class ThreadChannel(Partial, Object):
 
     A channel name is in-between 1-100 characters.
     """
-    last_message_id: str | Snowflake | None = field(converter=Snowflake, default=None)
+    last_message_id: str | Snowflake | None = field(converter=optional_c(Snowflake), default=None)
     """
     The ID of the last message sent in this channel.
 
@@ -1336,9 +1332,9 @@ class ThreadChannel(Partial, Object):
     """
     icon: str | None = field(default=None)
     """The hash for the channel's icon."""
-    owner_id: str | Snowflake | None = field(converter=Snowflake, default=None)
+    owner_id: str | Snowflake | None = field(converter=optional_c(Snowflake), default=None)
     """The ID of the creator of the group dm or thread."""
-    parent_id: str | Snowflake | None = field(converter=Snowflake, default=None)
+    parent_id: str | Snowflake | None = field(converter=optional_c(Snowflake), default=None)
     """
     The ID of the parent of the channel
 
@@ -1357,13 +1353,11 @@ class ThreadChannel(Partial, Object):
 
     Stops counting at `50`.
     """
-    # TODO: implement Thread Metadata object.
     thread_metadata: dict | ThreadMetadata | None = field(  # noqa
-        converter=ThreadMetadata, default=None  # noqa
+        converter=optional_c(ThreadMetadata), default=None  # noqa
     )  # noqa
     """Thread-specific fields not needed by other channels."""
-    # TODO: implement Thread Member object.
-    member: dict | ThreadMember | None = field(converter=ThreadMember, default=None)  # noqa
+    member: dict | ThreadMember | None = field(converter=optional_c(ThreadMember), default=None)  # noqa
     """
     The thread member representation of the user if they have joined the thread.
 
@@ -1381,12 +1375,12 @@ class ThreadChannel(Partial, Object):
 
     Only included when part of the resolved data received on a slash command interaction.
     """
-    flags: int | ChannelFlags | None = field(converter=ChannelFlags, default=None)
+    flags: int | ChannelFlags | None = field(converter=optional_c(ChannelFlags), default=None)
     """Channel flags combined as a bitfield."""
 
 
 @define(kw_only=True)
-class Channel(Object, Respondable):
+class Channel(Object, Respondable, Serializable):
     """
     Represents a channel from Discord.
 
@@ -1474,7 +1468,7 @@ class Channel(Object, Respondable):
     """The ID of the channel."""
     type: int | ChannelType = field(converter=ChannelType)
     """The type of the channel."""
-    guild_id: str | Snowflake | None = field(default=None, converter=Snowflake)
+    guild_id: str | Snowflake | None = field(converter=optional_c(Snowflake), default=None)
     """
     The ID of the guild.
 
@@ -1483,7 +1477,7 @@ class Channel(Object, Respondable):
     """
     position: int | None = field(default=None)
     """Sorted position of the channel."""
-    permission_overwrites: list[dict] | list[Overwrite] | None = field(default=None)
+    permission_overwrites: list[dict] | list[Overwrite] | None = field(converter=optional_c(list_c(Overwrite._c)), default=None)
     """Explicit permission overwrites for members and roles."""
     name: str | None = field(default=None)
     """
@@ -1499,7 +1493,7 @@ class Channel(Object, Respondable):
     """
     nsfw: bool | None = field(default=False)
     """Whether or not the channel is NSFW. Defaults to `False`."""
-    last_message_id: str | Snowflake | None = field(converter=Snowflake, default=None)
+    last_message_id: str | Snowflake | None = field(converter=optional_c(Snowflake), default=None)
     """
     The ID of the last message sent in this channel.
 
@@ -1515,15 +1509,15 @@ class Channel(Object, Respondable):
 
     Can be a number up to 21600. Bots, as well as users with the permission manage_messages or manage_channel, are unaffected.
     """
-    recipients: list[dict] | list[User] | None = field(default=None)
+    recipients: list[dict] | list[User] | None = field(converter=optional_c(list_c(User._c)), default=None)
     """The recipients of the dm."""
     icon: str | None = field(default=None)
     """The hash for the channel's icon."""
-    owner_id: str | Snowflake | None = field(converter=Snowflake, default=None)
+    owner_id: str | Snowflake | None = field(converter=optional_c(Snowflake), default=None)
     """The ID of the creator of the group dm or thread."""
-    application_id: str | Snowflake | None = field(converter=Snowflake, default=None)
+    application_id: str | Snowflake | None = field(converter=optional_c(Snowflake), default=None)
     """The ID of the application that created the dm if it is bot-created."""
-    parent_id: str | Snowflake | None = field(converter=Snowflake, default=None)
+    parent_id: str | Snowflake | None = field(converter=optional_c(Snowflake), default=None)
     """
     The ID of the parent of the channel
 
@@ -1534,7 +1528,7 @@ class Channel(Object, Respondable):
     rtc_region: str | None = field(default=None)
     """The channel's voice region ID if present, set to automatic when left as `None`."""
     video_quality_mode: int | VideoQualityMode | None = field(
-        converter=VideoQualityMode, default=None
+        converter=optional_c(VideoQualityMode), default=None
     )
     """The video quality mode of the voice channel."""
     message_count: int | None = field(default=None)
@@ -1549,13 +1543,11 @@ class Channel(Object, Respondable):
 
     Stops counting at `50`.
     """
-    # TODO: implement Thread Metadata object.
     thread_metadata: dict | ThreadMetadata | None = field(  # noqa
-        converter=ThreadMetadata, default=None  # noqa
+        converter=optional_c(ThreadMetadata._c), default=None  # noqa
     )  # noqa
     """Thread-specific fields not needed by other channels."""
-    # TODO: implement Thread Member object.
-    member: dict | ThreadMember | None = field(converter=ThreadMember, default=None)  # noqa
+    member: dict | ThreadMember | None = field(converter=optional_c(ThreadMember._c), default=None)  # noqa
     """
     The thread member representation of the user if they have joined the thread.
 
@@ -1573,10 +1565,10 @@ class Channel(Object, Respondable):
 
     Only included when part of the resolved data received on a slash command interaction.
     """
-    flags: int | ChannelFlags | None = field(converter=ChannelFlags, default=None)
+    flags: int | ChannelFlags | None = field(converter=optional_c(ChannelFlags), default=None)
     """Channel flags combined as a bitfield."""
 
-    async def send(self, bot: Bot, content: str | None = None) -> "Message":  # noqa
+    async def send(self, bot: "Bot", content: str | None = None) -> "Message":  # noqa
         resp = await super().send(
             bot,
             f"/channels/{self.id}/messages",
@@ -1587,7 +1579,7 @@ class Channel(Object, Respondable):
 
 
 @define(kw_only=True)
-class _EmbedMedia:
+class _EmbedMedia(Serializable):
     """
     Represents an embed thumbnail, video or image from Discord.
 
@@ -1620,7 +1612,7 @@ class _EmbedMedia:
 
 
 @define(kw_only=True)
-class _EmbedProvider:
+class _EmbedProvider(Serializable):
     """
     Represents the provider of an embed from Discord.
 
@@ -1639,7 +1631,7 @@ class _EmbedProvider:
 
 
 @define(kw_only=True)
-class _EmbedAuthor:
+class _EmbedAuthor(Serializable):
     """
     Represents the author of an embed from Discord.
 
@@ -1666,7 +1658,7 @@ class _EmbedAuthor:
 
 
 @define(kw_only=True)
-class _EmbedFooter:
+class _EmbedFooter(Serializable):
     """
     Represents the footer of an embed from Discord.
 
@@ -1695,7 +1687,7 @@ class _EmbedFooter:
 
 
 @define(kw_only=True)
-class _EmbedField:
+class _EmbedField(Serializable):
     """
     Represents a field of an embed from Discord.
 
@@ -1718,7 +1710,7 @@ class _EmbedField:
 
 
 @define(kw_only=True, frozen=True)
-class Embed:
+class Embed(Serializable):
     """
     Represnts a message embed from Discord.
 
@@ -1777,36 +1769,36 @@ class Embed:
     # TODO: implement Color abc
     # color: int | Color | None = field(converter=optional_c(Color), default=None)
     """The color of the embed."""
-    footer: dict | _EmbedFooter | None = field(converter=optional_c(_EmbedFooter), default=None)
+    footer: dict | _EmbedFooter | None = field(converter=optional_c(_EmbedFooter._c), default=None)
     """The footer of the embed."""
-    image: dict | _EmbedMedia | None = field(converter=optional_c(_EmbedMedia), default=None)
+    image: dict | _EmbedMedia | None = field(converter=optional_c(_EmbedMedia._c), default=None)
     """The image of the embed. This is a large image displayed under the title."""
-    thumbnail: dict | _EmbedMedia | None = field(converter=optional_c(_EmbedMedia), default=None)
+    thumbnail: dict | _EmbedMedia | None = field(converter=optional_c(_EmbedMedia._c), default=None)
     """The thumbnail of the embed. This is displayed as a small image on the embed."""
-    video: dict | _EmbedMedia | None = field(converter=optional_c(_EmbedMedia), default=None)
+    video: dict | _EmbedMedia | None = field(converter=optional_c(_EmbedMedia._c), default=None)
     """
     The video of the embed.
 
     This cannot be used for embeds from bots.
     """
     provider: dict | _EmbedProvider | None = field(
-        converter=optional_c(_EmbedProvider), default=None
+        converter=optional_c(_EmbedProvider._c), default=None
     )
     """
     The provider of the embed.
 
     This cannot be used for embeds from bots.
     """
-    author: dict | _EmbedAuthor | None = field(converter=optional_c(_EmbedAuthor), default=None)
+    author: dict | _EmbedAuthor | None = field(converter=optional_c(_EmbedAuthor._c), default=None)
     """The author of the embed."""
     fields: list[dict] | list[_EmbedField] | None = field(
-        converter=optional_c(list_c(_EmbedField), default=None)
+        converter=optional_c(list_c(_EmbedField._c)), default=None
     )
     """The fields of the embed."""
 
 
 @define(kw_only=True)
-class Attachment(Object):
+class Attachment(Object, Serializable):
     """
     Represents an attachment from Discord.
 
@@ -1893,7 +1885,7 @@ class Attachment(Object):
 
 
 @define(kw_only=True)
-class Message(Object):
+class Message(Object, Serializable):
     """
     Represents a message from Discord.
 
@@ -1983,20 +1975,20 @@ class Message(Object):
     """Whether or not this was a Text to Speech message."""
     mention_everyone: bool = field()
     """Whether or not this message mentions everyone."""
-    mentions: list[dict] | list[User] = field(converter=list_c(User))
+    mentions: list[dict] | list[User] = field(converter=list_c(User._c))
     """Users specifically mentioned in this message."""
     mention_roles: list[dict] | list[Role] = field(converter=list_c(Role))
     """Roles specifically mentioned in this message."""
     mention_channels: list[dict] | list[ChannelMention] | None = field(
-        converter=optional_c(list_c(ChannelMention)), default=None
+        converter=optional_c(list_c(ChannelMention._c)), default=None
     )
     """Channels specifically mentioned in this message."""
-    attachments: list[dict] | list[Attachment] = field(converter=list_c(Attachment))
+    attachments: list[dict] | list[Attachment] = field(converter=list_c(Attachment._c))
     """The attachments of the message."""
-    embeds: list[dict] | list[Embed] = field(converter=list_c(Embed))
+    embeds: list[dict] | list[Embed] = field(converter=list_c(Embed._c))
     """The embeds of the message."""
     reactions: list[dict] | list[Reaction] | None = field(
-        converter=optional_c(list_c(Reaction)), default=None
+        converter=optional_c(list_c(Reaction._c)), default=None
     )
     """The reactions to the message."""
     nonce: int | str | None = field(default=None)
@@ -2008,14 +2000,14 @@ class Message(Object):
     type: int | MessageType = field(converter=MessageType)
     """The type of the message."""
     activity: dict | MessageActivity | None = field(
-        converter=optional_c(MessageActivity), default=None
+        converter=optional_c(MessageActivity._c), default=None
     )
     """
     The activity of the message.
 
     Sent with Rich Presence related chat embeds.
     """
-    application: dict | Application | None = field(converter=optional_c(Application), default=None)
+    application: dict | Application | None = field(converter=optional_c(Application._c), default=None)
     """
     The application of the message's activity.
 
@@ -2028,28 +2020,28 @@ class Message(Object):
     Sent if the message is an interactions or an application-owned webhook.
     """
     message_reference: dict | MessageReference | None = field(
-        converter=optional_c(MessageReference), default=None
+        converter=optional_c(MessageReference._c), default=None
     )
     """The source of a crosspost or the source of activity related to channel follows."""
     flags: int | MessageFlags | None = field(converter=optional_c(MessageFlags), default=None)
     """Bitwise values representing a channel's flags."""
-    referenced_message: dict | "Message" | None = field(
+    referenced_message: dict | None = field(
         default=None
-    )  # TODO: Implement recursive converters
+    )  # TODO: Implement recursive converters (its a Message object)
     """The message associated with a message_reference."""
     # TODO: Implement Interaction object.
     # interaction: dict | Interaction | None = field(converter=optional_c(Interaction), default=None)
     """# The message's interaction if it is a response to an interaction."""
-    thread: dict | ThreadChannel | None = field(converter=optional_c(ThreadChannel), default=None)
+    thread: dict | ThreadChannel | None = field(converter=optional_c(ThreadChannel._c), default=None)
     """# The thread of the message, if it is the message that started a thread."""
     # TODO: Implement Component object.
     # components: list[dict] | list[Component] | None = field(converter=optional_c(list_c(Component)), default=None)
     # """The components on a message."""
     sticker_items: list[dict] | list[StickerItem] | None = field(
-        converter=optional_c(list_c(StickerItem)), default=None
+        converter=optional_c(list_c(StickerItem._c)), default=None
     )
     """The items used to begin rendering the message's stickers."""
     stickers: list[dict] | list[Sticker] | None = field(
-        converter=optional_c(list_c(Sticker)), default=None
+        converter=optional_c(list_c(Sticker._c)), default=None
     )
     """The stickers of a message."""

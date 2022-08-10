@@ -2,7 +2,7 @@ from ..api.http import _Route, _RouteMethod
 
 from attrs import asdict
 
-__all__ = ("Respondable", "Controllable", "Editable")
+__all__ = ("Respondable", "Controllable", "Editable", "Serializable")
 
 
 class Editable:

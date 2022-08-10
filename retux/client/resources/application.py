@@ -1,9 +1,11 @@
 from attrs import define, field
 from enum import IntFlag
 
+from ..mixins import Serializable
 from ...utils.converters import optional_c
 
 from .abc import Object, Partial, Snowflake
+from .user import User
 
 __all__ = ("PartialApplication", "Application", "ApplicationFlags", "InstallParams")
 
@@ -33,7 +35,7 @@ class ApplicationFlags(IntFlag):
 
 
 @define(kw_only=True)
-class InstallParams(Object):
+class InstallParams(Serializable):
     """
     Represents the install parameters of an application from Discord.
 
@@ -52,7 +54,7 @@ class InstallParams(Object):
 
 
 @define()
-class PartialApplication(Partial):
+class PartialApplication(Partial, Serializable):
     """
     Represents a partial application from Discord.
 
@@ -71,7 +73,7 @@ class PartialApplication(Partial):
 
 
 @define(kw_only=True)
-class Application(Object):
+class Application(Object, Serializable):
     """
     Represents an application from Discord.
 
@@ -99,6 +101,8 @@ class Application(Object):
         The url for the application's terms of service.
     privacy_policy_url : `str`, optional
         The url for the application's privacy policy.
+    owner : `User`, optional
+        A partial user object representing the application's owner.
     summary : `str`
         **Deprecated**. This is an empty string that will be removed in v11.
         Defaults to an empty string.
@@ -153,9 +157,8 @@ class Application(Object):
     """The url for the application's terms of service."""
     privacy_policy_url: str | None = field(default=None)
     """The url for the application's privacy policy."""
-    # TODO: implement User object
-    # owner: dict | User | None = field(converter=User, default=None)  # noqa
-    # """A partial user object representing the application's owner."""
+    owner: dict | User | None = field(converter=User._c, default=None)  # noqa
+    """A partial user object representing the application's owner."""
     summary: str = field()
     """**Deprecated**. This is an empty string that will be removed in v11. Defaults to `""`"""
     verify_key: str = field()

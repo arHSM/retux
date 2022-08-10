@@ -4,6 +4,8 @@ from typing import Any
 from enum import IntEnum
 from attrs import define, field
 
+from ..mixins import Serializable
+
 from .user import User, UserFlags, UserPremiumType
 from .emoji import Emoji
 from .sticker import Sticker
@@ -11,6 +13,7 @@ from .role import Role
 
 from .abc import Object, Partial, Snowflake
 
+from ..mixins import Serializable
 from ...utils.converters import optional_c, list_c
 
 __all__ = (
@@ -30,7 +33,7 @@ __all__ = (
 
 
 @define(kw_only=True)
-class WelcomeScreenChannel:
+class WelcomeScreenChannel(Serializable):
     """
     Represents a channel shown in the welcome screen of a guild from Discord.
 
@@ -61,7 +64,7 @@ class WelcomeScreenChannel:
 
 
 @define(kw_only=True)
-class WelcomeScreen:
+class WelcomeScreen(Serializable):
     """
     Represents the welcome screen in a guild from Discord.
 
@@ -83,7 +86,7 @@ class WelcomeScreen:
     description: str | None = field(default=None)
     """The description of the guild in the welcome screen."""
     welcome_channels: list[dict] | list[WelcomeScreenChannel] | None = field(
-        converter=optional_c(list_c(WelcomeScreenChannel)), default=None
+        converter=optional_c(list_c(WelcomeScreenChannel._c)), default=None
     )
     """
     The channels show in the welcome screen. A maximum
@@ -200,7 +203,7 @@ class VerificationLevel(IntEnum):
 
 
 @define(repr=False)
-class UnavailableGuild(Partial, Object):
+class UnavailableGuild(Partial, Object, Serializable):
     """
     Represents an unavailable guild from Discord.
 
@@ -223,7 +226,7 @@ class UnavailableGuild(Partial, Object):
 
 
 @define(kw_only=True)
-class Guild(Object):
+class Guild(Object, Serializable):
     """
     Represents a guild from Discord.
 
@@ -381,10 +384,10 @@ class Guild(Object):
     """Whether the server has its widget enabled or not."""
     widget_channel_id: str | Snowflake | None = field(converter=optional_c(Snowflake), default=None)
     """The ID of the channel which the widget targets, if present."""
-    roles: list[dict] | list[Role] | None = field(converter=optional_c(list_c(Role)), default=None)
+    roles: list[dict] | list[Role] | None = field(converter=optional_c(list_c(Role._c)), default=None)
     """The roles that the guild has, if present."""
     emojis: list[dict] | list[Emoji] | None = field(
-        converter=optional_c(list_c(Emoji)), default=None
+        converter=optional_c(list_c(Emoji._c)), default=None
     )
     """The Emojis that the guild owns."""
     application_id: str | Snowflake | None = field(converter=optional_c(Snowflake), default=None)
@@ -423,15 +426,15 @@ class Guild(Object):
     approximate_presence_count: int | None = field(default=None)
     """The approximated amount of presences in the guild."""
     welcome_screen: dict | WelcomeScreen | None = field(
-        converter=optional_c(WelcomeScreen), default=None
+        converter=optional_c(WelcomeScreen._c), default=None
     )
     """The welcome screen of the guild, if present."""
-    stickers: list[dict] | list[Sticker] | None = field(converter=Sticker, default=None)
+    stickers: list[dict] | list[Sticker] | None = field(converter=optional_c(list_c(Sticker._c)), default=None)
     """The stickers that the guild owns."""
 
 
 @define(kw_only=True)
-class GuildPreview(Object):
+class GuildPreview(Object, Serializable):
     """
     Represents the preview of a guild from Discord.
 
@@ -470,7 +473,7 @@ class GuildPreview(Object):
     """The name of the guild being previewed."""
     features: list[str] = field()
     """The enabled features of the previewed guild."""
-    emojis: list[dict] | list[Emoji] = field(converter=list_c(Emoji))
+    emojis: list[dict] | list[Emoji] = field(converter=list_c(Emoji._c))
     """The guild's custom Emojis."""
     approximate_member_count: int = field()
     """The approximated amount of members in the previewed guild."""
@@ -494,13 +497,13 @@ class GuildPreview(Object):
     determined as a Community server.
     """
     stickers: list[dict] | list[Sticker] | None = field(
-        converter=optional_c(list_c(Sticker)), default=None
+        converter=optional_c(list_c(Sticker._c)), default=None
     )
     """The stickers of the guild being previewed."""
 
 
 @define(kw_only=True)
-class GuildWidget(Object):
+class GuildWidget(Object, Serializable):
     """Represents the widget of a guild from Discord."""
 
     id: str | Snowflake = field(converter=Snowflake)
@@ -518,7 +521,7 @@ class GuildWidget(Object):
 
 
 @define(kw_only=True)
-class GuildWidgetSettings:
+class GuildWidgetSettings(Serializable):
     """
     Represents the settings of a widget of a guild in Discord.
 
@@ -538,7 +541,7 @@ class GuildWidgetSettings:
 
 
 @define(kw_only=True)
-class Member(Partial):
+class Member(Partial, Serializable):
     """
     Represents the member in a guild from Discord.
 
@@ -632,7 +635,7 @@ class Member(Partial):
         The type of Nitro subscription the user has, if present.
     """
 
-    user: dict | User | None = field(converter=optional_c(User), default=None)
+    user: dict | User | None = field(converter=optional_c(User._c), default=None)
     """
     The user representation of the member in the guild. This is only `None` when
     provided in a `MESSAGE_CREATE` or `MESSAGE_UPDATE` Gateway event.

@@ -1,6 +1,8 @@
+from ..mixins import Serializable
 from .abc import Snowflake, Object
 from .user import User
 from .guild import Member
+from ..mixins import Serializable
 from ...utils.converters import optional_c
 
 from attrs import define, field
@@ -84,7 +86,7 @@ class GuildScheduledEventStatus(IntEnum):
 
 
 @define(kw_only=True)
-class GuildScheduledEventEntityMetadata:
+class GuildScheduledEventEntityMetadata(Serializable):
     """
     Represents the additional metadata of guild scheduled events from Discord.
 
@@ -101,7 +103,7 @@ class GuildScheduledEventEntityMetadata:
 
 
 @define(kw_only=True)
-class GuildScheduledEvent(Object):
+class GuildScheduledEvent(Object, Serializable):
     """
     Represents a scheduled event of a guild from Discord.
 
@@ -181,10 +183,10 @@ class GuildScheduledEvent(Object):
     entity_id: str | Snowflake | None = field(converter=optional_c(Snowflake), default=None)
     """The ID of an entity associated with a guild scheduled event."""
     entity_metadata: dict | GuildScheduledEventEntityMetadata | None = field(
-        converter=optional_c(GuildScheduledEventEntityMetadata), default=None
+        converter=optional_c(GuildScheduledEventEntityMetadata._c), default=None
     )
     """Additional metadata for the guild scheduled event."""
-    creator: dict | User | None = field(converter=optional_c(User), default=None)
+    creator: dict | User | None = field(converter=optional_c(User._c), default=None)
     """The user that created the scheduled event."""
     user_count: int | None = field(default=None)
     """The number of users subscribed to the scheduled event."""
@@ -208,7 +210,7 @@ class GuildScheduledEventUser:
 
     guild_scheduled_event_id: str | Snowflake = field(converter=Snowflake)
     """The scheduled event id which the user subscribed to."""
-    user: dict | User = field(converter=User)
+    user: dict | User = field(converter=User._c)
     """The user which subscribed to an event."""
-    member: dict | Member | None = field(converter=optional_c(Member), default=None)
+    member: dict | Member | None = field(converter=optional_c(Member._c), default=None)
     """Guild member data for this user for the guild which this event belongs to, if any."""

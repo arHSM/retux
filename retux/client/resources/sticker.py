@@ -1,5 +1,7 @@
 from enum import IntEnum
 from attrs import define, field
+
+from ..mixins import Serializable
 from .abc import Object, Snowflake
 from .user import User
 from ...utils.converters import list_c, optional_c
@@ -54,7 +56,7 @@ class StickerFormatType(IntEnum):
 
 
 @define(kw_only=True)
-class Sticker(Object):
+class Sticker(Object, Serializable):
     """
     Represents a sticker from Discord.
 
@@ -148,7 +150,7 @@ class Sticker(Object):
     Will only be set to None if the sticker is
     owned by Discord.
     """
-    user: dict | User | None = field(converter=optional_c(User), default=None)
+    user: dict | User | None = field(converter=optional_c(User._c), default=None)
     """
     The user that uploaded the sticker.
 
@@ -175,7 +177,7 @@ class Sticker(Object):
 
 
 @define(kw_only=True)
-class StickerItem(Object):
+class StickerItem(Object, Serializable):
     """
     Represents the bare information needed
     to begin loading a sticker from Discord.
@@ -199,7 +201,7 @@ class StickerItem(Object):
 
 
 @define(kw_only=True)
-class StickerPack(Object):
+class StickerPack(Object, Serializable):
     """
     Represents a sticker pack from Discord.
 
@@ -223,7 +225,7 @@ class StickerPack(Object):
 
     id: str | Snowflake = field(converter=Snowflake)
     """The ID of the sticker pack."""
-    stickers: list[dict] | list[Sticker] = field(converter=list_c(Sticker))
+    stickers: list[dict] | list[Sticker] = field(converter=list_c(Sticker._c))
     """The stickers within the sticker pack."""
     name: str = field()
     """The name of the sticker pack."""

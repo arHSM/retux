@@ -1,11 +1,15 @@
 from attrs import define, field
+
+from ..mixins import Serializable
 from .abc import Object, Snowflake
 from .user import User
-from ...utils import optional_c
+from .role import Role
+from ..mixins import Serializable
+from ...utils import optional_c, list_c
 
 
 @define()
-class Emoji(Object):
+class Emoji(Object, Serializable):
     """
     Represents an Emoji from Discord.
 
@@ -50,10 +54,9 @@ class Emoji(Object):
     is standard, otherwise it is the name
     of the emoji.
     """
-    # roles: list[dict] | list[Role] | None = field(converter=optional_c(list_c(Role)))
-    # TODO: Implement Role object
-    # """A list of roles allowed to use this emoji."""
-    user: dict | User | None = field(converter=optional_c(User), default=None)
+    roles: list[dict] | list[Role] | None = field(converter=optional_c(list_c(Role._c)), default=None)
+    """A list of roles allowed to use this emoji."""
+    user: dict | User | None = field(converter=optional_c(User._c), default=None)
     """The user that created the emoji."""
     require_colons: bool | None = field(default=None)
     """Whether or not the emoji needs to be wrapped in colons."""

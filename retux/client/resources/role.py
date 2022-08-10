@@ -1,4 +1,5 @@
 from .abc import Snowflake, Object
+from ..mixins import Serializable
 from ...utils.converters import optional_c
 
 from attrs import define, field
@@ -11,7 +12,7 @@ __all__ = (
 
 
 @define(kw_only=True)
-class RoleTags:
+class RoleTags(Serializable):
     """
     Represents the tags of a role from Discord.
 
@@ -34,7 +35,7 @@ class RoleTags:
 
 
 @define(kw_only=True)
-class Role(Object):
+class Role(Object, Serializable):
     """
     Represents a role from Discord.
 
@@ -82,5 +83,5 @@ class Role(Object):
     """Whether this role is managed by an integration."""
     mentionable: bool = field()
     """Whether this role is mentionable."""
-    tags: RoleTags | None = field(converter=optional_c(RoleTags), default=None)
+    tags: RoleTags | None = field(converter=optional_c(RoleTags._c), default=None)
     """The tags this role has, if present."""

@@ -1,5 +1,6 @@
 from .abc import Snowflake
 from ...utils.converters import optional_c
+from ..mixins import Serializable
 from .guild import Member
 
 from attrs import define, field
@@ -8,8 +9,8 @@ from datetime import datetime
 __all__ = ("Voice", "VoiceState")
 
 
-@define()
-class VoiceState:
+@define(kw_only=True)
+class VoiceState(Serializable):
     """
     Represents the state of a user's VOIP from Discord.
 

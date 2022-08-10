@@ -1,6 +1,7 @@
 from enum import IntEnum, IntFlag
 from attrs import define, field
 
+from ..mixins import Serializable
 from .abc import Snowflake, Object
 
 __all__ = ("User", "UserFlags", "UserPremiumType")
@@ -62,7 +63,7 @@ class UserPremiumType(IntEnum):
 
 
 @define(kw_only=True)
-class User(Object):
+class User(Object, Serializable):
     """
     Represents a user from Discord.
 

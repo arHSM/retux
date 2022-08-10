@@ -2,6 +2,7 @@ from .user import User
 from .guild import Guild, Member
 from .channel import Channel
 from ...utils.converters import optional_c, list_c
+from ..mixins import Serializable
 from .application import Application
 from datetime import datetime
 
@@ -28,7 +29,7 @@ class InviteTargetType(IntEnum):
 
 
 @define()
-class InviteStageInstance:
+class InviteStageInstance(Serializable):
     """
     Represents an invite to a stage instance from Discord. This is deprecated.
 
@@ -44,7 +45,7 @@ class InviteStageInstance:
         The topic of the stage instance in-between 1-120 characters.
     """
 
-    members: list[Member] = field(converter=list_c(Member))
+    members: list[Member] = field(converter=list_c(Member._c))
     """The members speaking in the stage."""
     participant_count: int = field()
     """The number of users in the stage."""
@@ -55,7 +56,7 @@ class InviteStageInstance:
 
 
 @define()
-class Invite:
+class Invite(Serializable):
     """
     Represents an invite from Discord.
 
@@ -90,11 +91,11 @@ class Invite:
 
     code: str = field()
     """The invite code."""
-    guild: dict | Guild | None = field(converter=optional_c(Guild), default=None)
+    guild: dict | Guild | None = field(converter=optional_c(Guild._c), default=None)
     """The guild this invite is for, if any."""
-    channel: dict | Channel | None = field(converter=optional_c(Channel), default=None)
+    channel: dict | Channel | None = field(converter=optional_c(Channel._c), default=None)
     """The channel this invite is for, if any."""
-    inviter: dict | User | None = field(converter=optional_c(User), default=None)
+    inviter: dict | User | None = field(converter=optional_c(User._c), default=None)
     """The user who created the invite, if any."""
     target_type: int | InviteTargetType | None = field(
         converter=optional_c(InviteTargetType), default=None
@@ -103,7 +104,7 @@ class Invite:
     target_user: dict | User | None = field(converter=optional_c(User), default=None)
     """The user whose stream to display for this voice channel stream invite, if any."""
     target_application: dict | Application | None = field(
-        converter=optional_c(Application), default=None
+        converter=optional_c(Application._c), default=None
     )
     """The embedded application to open for this voice channel embedded application invite, if any"""
     approximate_presence_count: int | None = field(default=None)
@@ -115,7 +116,7 @@ class Invite:
     )
     """The expiration date of this invite, returned from the `Get Invites` endpoint when `with_expiration=True`."""
     stage_instance: int | InviteStageInstance | None = field(
-        converter=optional_c(InviteStageInstance), default=None
+        converter=optional_c(InviteStageInstance._c), default=None
     )
     """Data of the instance if there is a public stage in the channel this invite is for. (deprecated)"""
     # guild_scheduled_event
