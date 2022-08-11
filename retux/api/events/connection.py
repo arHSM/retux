@@ -95,7 +95,7 @@ class Ready(Serializable):
 
 
 @define()
-class HeartbeatAck(Serializable):
+class HeartbeatAck:
     """
     Represents when the client's Gateway connection has validated a heartbeat.
 
@@ -133,7 +133,7 @@ class Resumed(Serializable):
 
 
 @define()
-class Reconnect(Serializable):
+class Reconnect:
     """
     Represents when the client has been told to reconnect.
 
@@ -147,7 +147,7 @@ class Reconnect(Serializable):
 
 
 @define(repr=False)
-class InvalidSession(Serializable):
+class InvalidSession:
     """
     Represents when the client has an invalidated Gateway connection.
 
