@@ -785,11 +785,6 @@ class Member(Partial, Serializable):
         return self.exists(self.user, self.user.email)
 
     @property
-    def flags(self) -> UserFlags | None:
-        """The public flags on the user's account, if present."""
-        return self.exists(self.user, self.user.flags)
-
-    @property
     def premium_type(self) -> UserPremiumType | None:
         """The type of Nitro subscription the user has, if present."""
         return self.exists(self.user, self.user.premium_type)

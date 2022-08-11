@@ -1,13 +1,14 @@
 from datetime import datetime
 from attrs import define, field
 
+from ...client.mixins import Serializable
 from ...client.resources.abc import Snowflake
 from ...client.resources.guild import Member
 from ...utils.converters import optional_c
 
 
 @define()
-class TypingStart:
+class TypingStart(Serializable):
     """
     Represents a `TYPING_START` event from Discord.
 
@@ -50,7 +51,7 @@ class TypingStart:
     This will only appear when a user is typing
     outside of a DM.
     """
-    member: dict | Member | None = field(converter=optional_c(Member), default=None)
+    member: dict | Member | None = field(converter=optional_c(Member._c), default=None)
     """
     The member who started typing.
 

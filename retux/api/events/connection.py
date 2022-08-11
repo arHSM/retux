@@ -1,16 +1,15 @@
 from attrs import define, field
 
+from ...client.mixins import Serializable
 from ...client.resources.guild import UnavailableGuild
 from ...client.resources.application import PartialApplication
 from ...utils import list_c
-
-from .abc import _Event
 
 __all__ = ("Ready", "HeartbeatAck", "Resumed", "Reconnect", "InvalidSession")
 
 
 @define()
-class Ready(_Event):
+class Ready(Serializable):
     """
     Represents when the client has successfully connected.
 
@@ -96,7 +95,7 @@ class Ready(_Event):
 
 
 @define()
-class HeartbeatAck(_Event):
+class HeartbeatAck(Serializable):
     """
     Represents when the client's Gateway connection has validated a heartbeat.
 
@@ -111,7 +110,7 @@ class HeartbeatAck(_Event):
 
 
 @define()
-class Resumed(_Event):
+class Resumed(Serializable):
     """
     Represents when the client has successfully resumed a connection.
 
@@ -134,7 +133,7 @@ class Resumed(_Event):
 
 
 @define()
-class Reconnect(_Event):
+class Reconnect(Serializable):
     """
     Represents when the client has been told to reconnect.
 
@@ -148,7 +147,7 @@ class Reconnect(_Event):
 
 
 @define(repr=False)
-class InvalidSession(_Event):
+class InvalidSession(Serializable):
     """
     Represents when the client has an invalidated Gateway connection.
 

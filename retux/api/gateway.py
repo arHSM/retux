@@ -18,7 +18,7 @@ from .error import (
     InvalidIntents,
     DisallowedIntents,
 )
-from .events.abc import _Event, _EventTable
+from .events.abc import _EventTable
 from .events.connection import HeartbeatAck, InvalidSession, Ready, Reconnect, Resumed
 
 from ..client.flags import Intents
@@ -503,8 +503,10 @@ class GatewayClient(GatewayProtocol):
         logger.debug(f"Dispatching {_name}: {data if isinstance(data, dict) else kwargs}")
 
         for bot in self._bots:
-            if isinstance(data, dict) or isinstance(data, MISSING):
+            if isinstance(data, (dict, MISSING)):
                 await bot._trigger(_name.lower(), data)
+            elif data is None:
+                await bot._trigger(_name.lower(), kwargs)
             else:
                 if "id" in data.__dict__:
                     kwargs["bot_inst"] = bot
