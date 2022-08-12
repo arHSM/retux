@@ -25,7 +25,6 @@ from ..client.flags import Intents
 from ..client.resources.abc import Snowflake
 from ..client.mixins import Serializable
 from ..const import MISSING, NotNeeded, __gateway_url__
-from ..utils.validators import dataclass_v
 
 logger = getLogger(__name__)
 
@@ -508,7 +507,7 @@ class GatewayClient(GatewayProtocol):
             elif data is None:
                 await bot._trigger(_name.lower(), kwargs)
             else:
-                if "id" in data.__dict__:
+                if kwargs.get("id"):
                     kwargs["bot_inst"] = bot
                 await bot._trigger(
                     _name.lower(),

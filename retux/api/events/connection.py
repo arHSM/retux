@@ -95,7 +95,7 @@ class Ready(Serializable):
 
 
 @define()
-class HeartbeatAck:
+class HeartbeatAck(Serializable):
     """
     Represents when the client's Gateway connection has validated a heartbeat.
 
