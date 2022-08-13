@@ -284,8 +284,7 @@ class GatewayClient(GatewayProtocol):
             return structure_attrs_fromdict(json, _GatewayPayload)
         except ConnectionClosed:
             logger.warning("The connection to Discord's Gateway has closed.")
-            self._closed = True
-            await self.reconnect()
+            await self._error()
 
     async def _send(self, payload: _GatewayPayload):
         """
@@ -306,8 +305,7 @@ class GatewayClient(GatewayProtocol):
             resp = await self._conn.send_message(json)  # noqa
         except ConnectionClosed:
             logger.warning("The connection to Discord's Gateway has closed.")
-            await self._conn.aclose()
-            await self.reconnect()
+            await self._error()
 
     async def connect(self):
         """Connects to the Gateway and initiates a WebSocket state."""
@@ -324,41 +322,11 @@ class GatewayClient(GatewayProtocol):
             f"{'' if self._meta.compress is None else f'&compress={self._meta.compress}'}"
         ) as self._conn:
             self._closed = bool(self._conn.closed)
-
+            print(self._conn.closed)
             if self._stopped:
                 await self._conn.aclose()
             if self._closed:
-                try:
-                    match self._conn.closed.code:
-                        case 4004:
-                            raise InvalidToken(
-                                "Your bots token is invalid. (Make sure there's a value, or reset if needed.)"
-                            )
-                        case 4008:
-                            raise RateLimited(
-                                "Your bot is being Gateway rate limited. You will be reconnected."
-                            )
-                        case 4010:
-                            raise InvalidShard(
-                                "You provided an invalid shard. Make sure the shard is correct! (https://discord.dev/topics/gateway#sharding)"
-                            )
-                        case 4011:
-                            raise RequiresSharding(
-                                "Your bot requires sharding, please use autoshard=True."
-                            )
-                        case 4013:
-                            raise InvalidIntents(
-                                "You provided an invalid intent. Make sure your intent is a value! (Did you also miss a | for adding more than one?)"
-                            )
-                        case 4014:
-                            raise DisallowedIntents(
-                                "You provided an intent that your bot is not approved for. Make sure your bot is verified and/or has it enabled in the Developer Portal."
-                            )
-                        case _:
-                            pass
-                except RateLimited:
-                    await self._conn.aclose()
-                    await self.reconnect()
+                await self._error()
 
             while not self._closed:
                 data = await self._receive()
@@ -375,6 +343,40 @@ class GatewayClient(GatewayProtocol):
             await self.connect()
         else:
             logger.info("Told to reconnect, but did not need to.")
+
+    async def _error(self):
+        """Handles error responses from closing codes."""
+        code = self._conn.closed.code
+        await self._conn.aclose()
+
+        try:
+            match code:
+                case 4004:
+                    raise InvalidToken(
+                        "Your bots token is invalid. (Make sure there's a value, or reset if needed.)"
+                    )
+                case 4008:
+                    raise RateLimited(
+                        "Your bot is being Gateway rate limited. You will be reconnected."
+                    )
+                case 4010:
+                    raise InvalidShard(
+                        "You provided an invalid shard. Make sure the shard is correct! (https://discord.dev/topics/gateway#sharding)"
+                    )
+                case 4011:
+                    raise RequiresSharding("Your bot requires sharding, please use autoshard=True.")
+                case 4013:
+                    raise InvalidIntents(
+                        "You provided an invalid intent. Make sure your intent is a value! (Did you also miss a | for adding more than one?)"
+                    )
+                case 4014:
+                    raise DisallowedIntents(
+                        "You provided an intent that your bot is not approved for. Make sure your bot is verified and/or has it enabled in the Developer Portal."
+                    )
+                case _:
+                    pass
+        except RateLimited:
+            await self.reconnect()
 
     async def _track(self, payload: _GatewayPayload):
         """
@@ -550,7 +552,6 @@ class GatewayClient(GatewayProtocol):
         # Please spare me Bluenix.
 
         logger.debug("Waiting the appropriate time for probable connection.")
-        await sleep(1)
 
         while self._heartbeat_ack:
             logger.debug("Sending a heartbeat payload to the Gateway.")
