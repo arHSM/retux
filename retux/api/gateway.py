@@ -322,7 +322,7 @@ class GatewayClient(GatewayProtocol):
             f"{'' if self._meta.compress is None else f'&compress={self._meta.compress}'}"
         ) as self._conn:
             self._closed = bool(self._conn.closed)
-            print(self._conn.closed)
+
             if self._stopped:
                 await self._conn.aclose()
             if self._closed:
