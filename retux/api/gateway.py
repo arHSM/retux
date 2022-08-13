@@ -349,34 +349,35 @@ class GatewayClient(GatewayProtocol):
         code = self._conn.closed.code
         await self._conn.aclose()
 
-        try:
-            match code:
-                case 4004:
-                    raise InvalidToken(
-                        "Your bots token is invalid. (Make sure there's a value, or reset if needed.)"
-                    )
-                case 4008:
-                    raise RateLimited(
-                        "Your bot is being Gateway rate limited. You will be reconnected."
-                    )
-                case 4010:
-                    raise InvalidShard(
-                        "You provided an invalid shard. Make sure the shard is correct! (https://discord.dev/topics/gateway#sharding)"
-                    )
-                case 4011:
-                    raise RequiresSharding("Your bot requires sharding, please use autoshard=True.")
-                case 4013:
-                    raise InvalidIntents(
-                        "You provided an invalid intent. Make sure your intent is a value! (Did you also miss a | for adding more than one?)"
-                    )
-                case 4014:
-                    raise DisallowedIntents(
-                        "You provided an intent that your bot is not approved for. Make sure your bot is verified and/or has it enabled in the Developer Portal."
-                    )
-                case _:
-                    pass
-        except RateLimited:
-            await self.reconnect()
+        match code:
+            case 4004:
+                raise InvalidToken(
+                    "Your bots token is invalid. (Make sure there's a value, or reset if needed.)"
+                )
+            case 4008:
+                # Theory-wise, the user won't need to know about the rate limit if we're handling it already.
+                # We only throw non-resumable exceptions for things that cannot resume the connection.
+                # FIXME: probably move away from exception logging and use a traceback formatter.
+                logger.exception(
+                    RateLimited, "Your bot is being Gateway rate limited. You will be reconnected."
+                )
+                await self.reconnect()
+            case 4010:
+                raise InvalidShard(
+                    "You provided an invalid shard. Make sure the shard is correct! (https://discord.dev/topics/gateway#sharding)"
+                )
+            case 4011:
+                raise RequiresSharding("Your bot requires sharding, please use autoshard=True.")
+            case 4013:
+                raise InvalidIntents(
+                    "You provided an invalid intent. Make sure your intent is a value! (Did you also miss a | for adding more than one?)"
+                )
+            case 4014:
+                raise DisallowedIntents(
+                    "You provided an intent that your bot is not approved for. Make sure your bot is verified and/or has it enabled in the Developer Portal."
+                )
+            case _:
+                pass
 
     async def _track(self, payload: _GatewayPayload):
         """
