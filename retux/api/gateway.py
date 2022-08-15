@@ -1,6 +1,7 @@
 from enum import IntEnum
 from json import dumps, loads
 from logging import getLogger
+from random import random
 from sys import platform
 from time import perf_counter
 from typing import Any, Protocol
@@ -17,6 +18,7 @@ from .error import (
     RequiresSharding,
     InvalidIntents,
     DisallowedIntents,
+    RandomClose,
 )
 from .events.abc import _EventTable
 from .events.connection import HeartbeatAck, InvalidSession, Ready, Reconnect, Resumed
@@ -283,7 +285,7 @@ class GatewayClient(GatewayProtocol):
             json = loads(resp)
             return structure_attrs_fromdict(json, _GatewayPayload)
         except ConnectionClosed:
-            logger.warning("The connection to Discord's Gateway has closed.")
+            logger.error("The connection to Discord's Gateway has closed.")
             await self._error()
 
     async def _send(self, payload: _GatewayPayload):
@@ -304,7 +306,7 @@ class GatewayClient(GatewayProtocol):
             json = dumps(asdict(payload))
             resp = await self._conn.send_message(json)  # noqa
         except ConnectionClosed:
-            logger.warning("The connection to Discord's Gateway has closed.")
+            logger.error("The connection to Discord's Gateway has closed.")
             await self._error()
 
     async def connect(self):
@@ -377,7 +379,7 @@ class GatewayClient(GatewayProtocol):
                     "You provided an intent that your bot is not approved for. Make sure your bot is verified and/or has it enabled in the Developer Portal."
                 )
             case _:
-                pass
+                raise RandomClose(f"The Gateway has randomly closed. (WS code {code})")
 
     async def _track(self, payload: _GatewayPayload):
         """
@@ -396,7 +398,7 @@ class GatewayClient(GatewayProtocol):
         match _GatewayOpCode(payload.opcode):
             case _GatewayOpCode.HELLO:
                 if self._meta.session_id:
-                    logger.debug("Prior connection found, trying to resume.")
+                    logger.info("Prior connection found, trying to resume.")
                     await self._resume()
                 else:
                     logger.debug("New connection found, identifying to the Gateway.")
@@ -417,19 +419,21 @@ class GatewayClient(GatewayProtocol):
                 await self._dispatch("INVALID_SESSION", InvalidSession, payload.data)
 
                 if bool(payload.data):
-                    logger.debug(
+                    logger.warning(
                         "The Gateway has told us to reconnect. Resuming last known connection."
                     )
                     await self._resume()
                 else:
-                    logger.debug(
+                    logger.error(
                         "The given connection cannot be reconnected to. Starting new connection."
                     )
                     self._meta.session_id = None
                     await self._conn.aclose()
                     await self.reconnect()
             case _GatewayOpCode.RECONNECT:
-                logger.info("The Gateway has told us to reconnect. Resuming last known connection.")
+                logger.warning(
+                    "The Gateway has told us to reconnect. Resuming last known connection."
+                )
                 await self._dispatch("RECONNECT", Reconnect)
                 await self._resume()
             case _GatewayOpCode.DISPATCH:
@@ -438,15 +442,15 @@ class GatewayClient(GatewayProtocol):
                     await self._dispatch(payload.name, resource, **payload.data)
         match payload.name:
             case "RESUMED":
-                logger.debug(
+                logger.info(
                     f"The connection was resumed. (session: {self._meta.session_id}, sequence: {self._meta.seq}"
                 )
                 await self._dispatch("RESUMED", Resumed, **payload.data)
             case "READY":
                 self._meta.session_id = payload.data["session_id"]
                 self._meta.seq = payload.sequence
-                logger.debug(
-                    f"The Gateway has declared a ready connection. (session: {self._meta.session_id}, sequence: {self._meta.seq}"
+                logger.info(
+                    f"The Gateway has declared a ready connection. (session: {self._meta.session_id}, sequence: {self._meta.seq})"
                 )
                 await self._dispatch("READY", Ready, **payload.data)
 
@@ -547,12 +551,8 @@ class GatewayClient(GatewayProtocol):
         """Sends a heartbeat payload to the Gateway."""
         payload = _GatewayPayload(op=_GatewayOpCode.HEARTBEAT.value, d=self._meta.seq)
 
-        # FIXME: Move towards a better solution for the heartbeat acknowledgement loop.
-        # This is a really bad approach to fixing heartbeat timing, but this only fires
-        # during the initialisation of the async context manager.
-        # Please spare me Bluenix.
-
         logger.debug("Waiting the appropriate time for probable connection.")
+        await sleep(random())
 
         while self._heartbeat_ack:
             logger.debug("Sending a heartbeat payload to the Gateway.")
@@ -658,4 +658,5 @@ class GatewayClient(GatewayProtocol):
         The calculated difference between the last known set
         of acknowledgements for a Gateway event.
         """
+        logger.debug("Determining the latency call.")
         return self._last_ack[1] - self._last_ack[0]

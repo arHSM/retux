@@ -93,3 +93,11 @@ class DisallowedIntents(Exception):
     If your bot application is pending verification and/or is missing an intent
     checked off in the Developer Portal, this may be the reason why.
     """
+
+
+class RandomClose(Exception):
+    """
+    A random close has been initiated by the Gateway.
+
+    These can occur for whatever reason and must be properly handled.
+    """
