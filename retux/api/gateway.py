@@ -7,7 +7,7 @@ from time import perf_counter
 from typing import Any, Protocol
 
 from attrs import asdict, define, field
-from cattrs import structure_attrs_fromdict
+from cattrs import structure
 from trio import open_nursery, sleep, Nursery
 from trio_websocket import ConnectionClosed, WebSocketConnection, open_websocket_url
 
@@ -25,7 +25,6 @@ from .events.connection import HeartbeatAck, InvalidSession, Ready, Reconnect, R
 
 from ..client.flags import Intents
 from ..client.resources.abc import Snowflake
-from ..client.mixins import Serializable
 from ..const import MISSING, NotNeeded, __gateway_url__
 
 logger = getLogger(__name__)
@@ -283,7 +282,7 @@ class GatewayClient(GatewayProtocol):
         try:
             resp = await self._conn.get_message()
             json = loads(resp)
-            return structure_attrs_fromdict(json, _GatewayPayload)
+            return structure(json, _GatewayPayload)
         except ConnectionClosed:
             logger.error("The connection to Discord's Gateway has closed.")
             await self._error()
@@ -478,7 +477,7 @@ class GatewayClient(GatewayProtocol):
         self._bots.append(bot)
 
     async def _dispatch(
-        self, _name: str, data: list[dict] | dict | Serializable | MISSING, *args, **kwargs
+        self, _name: str, data: list[dict] | dict | type | MISSING, *args, **kwargs
     ):
         """
         Dispatches an event from the Gateway.
@@ -518,7 +517,7 @@ class GatewayClient(GatewayProtocol):
                     kwargs["bot_inst"] = bot
                 await bot._trigger(
                     _name.lower(),
-                    data._c(kwargs),
+                    structure(kwargs, data),
                 )
 
     async def _identify(self):

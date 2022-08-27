@@ -1,5 +1,4 @@
-from retux.retux.client.mixins import Serializable
-from .abc import Snowflake
+from .abc import Snowflake, Timestamp
 from .user import User
 from .guild import Guild
 from ..mixins import Serializable
@@ -11,7 +10,7 @@ __all__ = ("GuildTemplate",)
 
 
 @define(kw_only=True)
-class GuildTemplate(Serializable):
+class GuildTemplate:
     """
     Represents the template of a guild from Discord.
 
@@ -41,25 +40,25 @@ class GuildTemplate(Serializable):
         Whether the template has unsynced changes or not.
     """
 
-    code: str = field()
+    code: str
     """The template code as unique ID."""
-    name: str = field()
+    name: str
     """The name of the template."""
-    description: str | None = field(default=None)
+    description: str = None
     """The description of the template, if any."""
-    usage_count: int = field()
+    usage_count: int
     """The amount of times this template has been used."""
-    creator_id: str | Snowflake = field(converter=Snowflake)
+    creator_id: Snowflake
     """The ID of the user who created the template."""
-    creator: dict | User = field(converter=User._c)
+    creator: User
     """The user who created the template."""
-    created_at: str | datetime = field(converter=datetime.fromisoformat)
+    created_at: Timestamp
     """When this template was created."""
-    updated_at: str | datetime = field(converter=datetime.fromisoformat)
+    updated_at: Timestamp
     """When this template was last synced to the source guild."""
-    source_guild_id: str | Snowflake = field(converter=Snowflake)
+    source_guild_id: Snowflake
     """The ID of the guild this template is based on."""
-    serialized_source_guild: dict | Guild = field(converter=Guild._c)
+    serialized_source_guild: Guild
     """The guild snapshot this template contains."""
-    is_dirty: bool = field(default=False)
+    is_dirty: bool = False
     """Whether the template has unsynced changes or not."""

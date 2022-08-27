@@ -1,6 +1,10 @@
 from cattrs import Converter, register_structure_hook
 from ..client.resources.abc import Snowflake, Timestamp
 
+__all__ = ("cattrs_structure_hooks")
+
+def _pos_arg(data, type):
+    return type(data)
 
 def cattrs_structure_hooks(converter: Converter = None):
     """
@@ -18,5 +22,5 @@ def cattrs_structure_hooks(converter: Converter = None):
         reg = converter.register_structure_hook
     else:
         reg = register_structure_hook
-    reg(Snowflake, lambda d, t: t(d))
-    reg(Timestamp, lambda d, t: t(d))
+    reg(Snowflake, _pos_arg)
+    reg(Timestamp, _pos_arg)

@@ -36,11 +36,11 @@ class ImageData:
     def __repr__(self) -> str:
         return self.data
 
-    file: str = field()
+    file: str
     """The name of the file, or path to the file if no `fp` is specified."""
-    fp: NotNeeded[IOBase | bytes] = field(default=MISSING)
+    fp: IOBase | bytes = MISSING
     """The data of the file to be uploaded, either as bytes or io-object."""
-    _data: str = field(default=None)
+    _data: str = None
     """The finalised and encrypted data that is sent to discord. Do not utilise as user."""
 
     def __attrs_post_init__(self):

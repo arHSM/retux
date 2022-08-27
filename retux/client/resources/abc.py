@@ -533,9 +533,9 @@ class Object:
     id : `Snowflake`
         The ID associated to the object.
     """
-    id: str | Snowflake = field(converter=Snowflake)
+    id: Snowflake
     """The ID associated to the object."""
-    _bot_inst: NotNeeded["Bot"] = field(default=MISSING)
+    _bot_inst: object = MISSING
     """An instance of `Bot` used for helper methods."""
 
 @define()
@@ -550,4 +550,4 @@ class Component:
     a developer-defined ID in-between 1-100 characters.
     """
 
-    custom_id: str | None = field(default=None)
+    custom_id: str = None
