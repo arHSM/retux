@@ -1348,7 +1348,7 @@ class ThreadChannel(Partial, Object):
     """
     thread_metadata: ThreadMetadata = None
     """Thread-specific fields not needed by other channels."""
-    member: ThreadMember  = None
+    member: ThreadMember = None
     """
     The thread member representation of the user if they have joined the thread.
 

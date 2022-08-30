@@ -70,4 +70,5 @@ class VoiceState:
     request_to_speak_timestamp: Timestamp = None
     """The time at which the user requested to speak."""
 
+
 Voice = VoiceState

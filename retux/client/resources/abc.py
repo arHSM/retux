@@ -533,10 +533,12 @@ class Object:
     id : `Snowflake`
         The ID associated to the object.
     """
+
     id: Snowflake
     """The ID associated to the object."""
     _bot_inst: object = MISSING
     """An instance of `Bot` used for helper methods."""
+
 
 @define()
 class Component:

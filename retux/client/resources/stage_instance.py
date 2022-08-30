@@ -66,4 +66,5 @@ class StageInstance:
     guild_scheduled_event_id: Snowflake
     """The ID of the scheduled event for this stage instance."""
 
+
 Stage = StageInstance

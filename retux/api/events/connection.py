@@ -54,7 +54,7 @@ class Ready:
     """The settings of the bot application, if present."""
     user: User
     """The user form of the bot application."""
-    #guilds: list[UnavailableGuild]
+    # guilds: list[UnavailableGuild]
     guilds: list
     """The guilds unavailable to the bot."""
     # TODO: Investigate the guild_join_requests field.

@@ -70,7 +70,7 @@ class Bot(BotProtocol):
         self.intents = intents
         self._gateway = MISSING
         self.http = MISSING
-        
+
         cattrs_structure_hooks()
 
     def start(self, token: str):

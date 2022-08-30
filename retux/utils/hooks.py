@@ -1,15 +1,17 @@
 from cattrs import Converter, register_structure_hook
 from ..client.resources.abc import Snowflake, Timestamp
 
-__all__ = ("cattrs_structure_hooks")
+__all__ = "cattrs_structure_hooks"
+
 
 def _pos_arg(data, type):
     return type(data)
 
+
 def cattrs_structure_hooks(converter: Converter = None):
     """
     Hooks retux objects into the cattrs converter.
-    Can be used to hook objects into a user made 
+    Can be used to hook objects into a user made
     converter as well.
 
     Parameters
