@@ -1,7 +1,6 @@
-from attrs import define, field
+from attrs import define
 from enum import IntFlag
 
-from ...utils.converters import optional_c
 
 from .abc import Object, Partial, Snowflake
 from .user import User
