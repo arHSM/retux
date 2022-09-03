@@ -1,7 +1,6 @@
 from .abc import Snowflake, Object
-from ...utils.converters import optional_c
 
-from attrs import define, field
+from attrs import define
 
 
 __all__ = (

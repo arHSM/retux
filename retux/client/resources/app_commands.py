@@ -1,10 +1,9 @@
 from enum import IntEnum
 
-from attrs import define, field
+from attrs import define
 
 from .abc import Object, Snowflake
 
-from ...utils.converters import list_c, optional_c
 
 __all__ = ("ApplicationCommand", "ApplicationCommandOption", "ApplicationCommandOptionChoice")
 

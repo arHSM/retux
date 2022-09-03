@@ -2,9 +2,8 @@ from .abc import Snowflake, Object
 from .user import User
 from .guild import Guild
 from .channel import Channel
-from ...utils.converters import optional_c
 
-from attrs import define, field
+from attrs import define
 from enum import IntEnum
 
 

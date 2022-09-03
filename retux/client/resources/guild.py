@@ -1,8 +1,7 @@
-from datetime import datetime
 from enum import IntFlag
 from typing import Any
 from enum import IntEnum
-from attrs import define, field
+from attrs import define
 
 from .user import User, UserFlags, UserPremiumType
 from .emoji import Emoji
@@ -11,7 +10,6 @@ from .role import Role
 
 from .abc import Object, Partial, Snowflake, Timestamp
 
-from ...utils.converters import optional_c, list_c
 
 __all__ = (
     "Guild",

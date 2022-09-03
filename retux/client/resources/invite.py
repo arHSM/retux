@@ -2,11 +2,9 @@ from .abc import Timestamp
 from .user import User
 from .guild import Guild, Member
 from .channel import Channel
-from ...utils.converters import optional_c, list_c
 from .application import Application
-from datetime import datetime
 
-from attrs import define, field
+from attrs import define
 from enum import IntEnum
 
 

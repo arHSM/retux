@@ -1,13 +1,12 @@
 from datetime import datetime
 from enum import IntEnum, IntFlag
-from attrs import define, field
+from attrs import define
 from retux.client.resources.abc import Snowflake, Object, Partial
 from .abc import Timestamp
 from .application import Application
 from .sticker import Sticker, StickerItem
 from .user import User
 from .role import Role
-from ...utils.converters import optional_c, list_c
 from ..mixins import Respondable
 
 __all__ = (

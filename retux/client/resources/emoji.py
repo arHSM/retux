@@ -1,9 +1,8 @@
-from attrs import define, field
+from attrs import define
 
 from .abc import Object, Snowflake
 from .user import User
 from .role import Role
-from ...utils import optional_c, list_c
 
 
 @define()

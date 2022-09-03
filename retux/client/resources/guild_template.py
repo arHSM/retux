@@ -1,10 +1,8 @@
 from .abc import Snowflake, Timestamp
 from .user import User
 from .guild import Guild
-from ..mixins import Serializable
 
-from attrs import define, field
-from datetime import datetime
+from attrs import define
 
 __all__ = ("GuildTemplate",)
 

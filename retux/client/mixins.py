@@ -1,5 +1,4 @@
 from ..api.http import _Route, _RouteMethod
-from ..utils.validators import dataclass_v
 
 from attrs import asdict
 

@@ -3,7 +3,6 @@ from attrs import define, field
 
 from ...client.resources.abc import Snowflake
 from ...client.resources.guild import Member
-from ...utils.converters import optional_c
 
 
 @define()

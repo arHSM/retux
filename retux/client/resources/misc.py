@@ -1,7 +1,7 @@
-from ...const import MISSING, NotNeeded
+from ...const import MISSING
 from io import IOBase
 from base64 import b64encode
-from attrs import define, field
+from attrs import define
 
 
 __all__ = ("ImageData",)

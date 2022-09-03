@@ -1,10 +1,8 @@
 from .abc import Snowflake, Object, Timestamp
 from .user import User
 from .guild import Member
-from ...utils.converters import optional_c
 
-from attrs import define, field
-from datetime import datetime
+from attrs import define
 from enum import IntEnum
 
 __all__ = (

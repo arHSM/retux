@@ -1,9 +1,8 @@
-from attrs import define, field
+from attrs import define
 
 from ...client.resources.guild import UnavailableGuild
 from ...client.resources.user import User
 from ...client.resources.application import PartialApplication
-from ...utils import list_c
 
 __all__ = ("Ready", "HeartbeatAck", "Resumed", "Reconnect", "InvalidSession")
 
@@ -54,8 +53,7 @@ class Ready:
     """The settings of the bot application, if present."""
     user: User
     """The user form of the bot application."""
-    # guilds: list[UnavailableGuild]
-    guilds: list
+    guilds: list[UnavailableGuild]
     """The guilds unavailable to the bot."""
     # TODO: Investigate the guild_join_requests field.
     guild_join_requests: list = None

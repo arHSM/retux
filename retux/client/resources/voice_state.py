@@ -1,9 +1,7 @@
 from .abc import Snowflake, Timestamp
-from ...utils.converters import optional_c
 from .guild import Member
 
-from attrs import define, field
-from datetime import datetime
+from attrs import define
 
 __all__ = ("Voice", "VoiceState")
 
