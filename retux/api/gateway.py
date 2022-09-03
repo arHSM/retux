@@ -587,7 +587,7 @@ class GatewayClient(GatewayProtocol):
             Whether you only want to receive guild members with
             a presence. The `GUILD_PRESENCES` intent must be
             enabled in order to use.
-        user_ids : `Snowflake` or `list[Snowflake]`, optional
+        user_ids : `Snowflake`, `list[Snowflake]`, optional
             The IDs of members in the guild to return. This
             may be used in conjunction to `query`, and poses the
             same maximum as `limit` regardless of declaration.
@@ -649,6 +649,39 @@ class GatewayClient(GatewayProtocol):
             },
         )
         logger.debug("Sending a payload requesting a voice state update to the Gateway.")
+        await self._send(payload)
+
+    async def update_presence(
+        self,
+        # TODO: Implement Activity object.
+        # activities: list[Activity],
+        status: NotNeeded[str] = MISSING,
+        afk: NotNeeded[bool] = MISSING,
+    ):
+        """
+        Sends a request updating the bots presence to the Gateway.
+
+        Parameters
+        ----------
+        status : `str`, optional
+            The activity status of the bot while connected
+            to Discord.
+            e.g. "online", "dnd"
+        afk : `bool`, optional
+            Whether the bot is AFK or not. This is used in favour of
+            allowing `since`, a client-determined variable. You may
+            use this instead of writing "idle" to `status`.
+        """
+        payload = _GatewayPayload(
+            op=_GatewayOpCode.PRESENCE_UPDATE,
+            d={
+                "since": 0,
+                # "activities": asdict(activities),
+                "status": "online" if status is MISSING else status,
+                "afk": False if afk is MISSING and status != "idle" else afk,
+            },
+        )
+        logger.debug("Sending a payload requesting a presence update to the Gateway.")
         await self._send(payload)
 
     @property
