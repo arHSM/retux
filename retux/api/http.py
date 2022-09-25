@@ -125,9 +125,7 @@ class HTTPClient(HTTPProtocol):
     _rate_limits: dict[str, _Limit] = {}
     """The rate limits currently stored."""
 
-    def __init__(
-        self, token: str, compression: NotNeeded[Literal["brotli", "gzip"]] = MISSING
-    ):
+    def __init__(self, token: str, compression: NotNeeded[Literal["brotli", "gzip"]] = MISSING):
         """
         Creates a new connection to the REST API.
 
@@ -173,9 +171,7 @@ class HTTPClient(HTTPProtocol):
                 reqkwargs["data"] = {"payload_json": dumps(json)}
                 reqkwargs["files"] = []
                 for (idx, file) in enumerate(files.__iter__()):
-                    reqkwargs["files"].append(
-                        (f"files[{idx}]", (file.name, file.get(), file.mime))
-                    )
+                    reqkwargs["files"].append((f"files[{idx}]", (file.name, file.get(), file.mime)))
             else:
                 reqkwargs["json"] = json
 
@@ -183,16 +179,11 @@ class HTTPClient(HTTPProtocol):
 
         request = self._client.build_request(method, route, **reqkwargs)
 
-        if (
-            self._global_rate_limit.event.is_set()
-            and self._global_rate_limit.reset_after != 0
-        ):
+        if self._global_rate_limit.event.is_set() and self._global_rate_limit.reset_after != 0:
             logger.warning(
                 f"There is still a global rate limit ongoing. Trying again in {self._global_rate_limit.reset_after}s."
             )
-            await self._global_rate_limit.event.wait(
-                self._global_rate_limit.reset_after
-            )
+            await self._global_rate_limit.event.wait(self._global_rate_limit.reset_after)
             self._global_rate_limit.reset_after = 0.0
         elif self._global_rate_limit.reset_after == 0.0:
             self._global_rate_limit.event = Event()
