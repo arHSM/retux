@@ -1,7 +1,6 @@
-from .abc import Snowflake, Object
-
 from attrs import define
 
+from .abc import Object, Snowflake
 
 __all__ = (
     "Role",

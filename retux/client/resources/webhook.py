@@ -1,10 +1,11 @@
-from .abc import Snowflake, Object
-from .user import User
-from .guild import Guild
-from .channel import Channel
+from enum import IntEnum
 
 from attrs import define
-from enum import IntEnum
+
+from .abc import Object, Snowflake
+from .channel import Channel
+from .guild import Guild
+from .user import User
 
 
 class WebhookType(IntEnum):

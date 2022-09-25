@@ -1,4 +1,5 @@
 from enum import IntEnum
+
 from attrs import define
 
 from .abc import Object, Snowflake

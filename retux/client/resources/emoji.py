@@ -1,8 +1,8 @@
 from attrs import define
 
 from .abc import Object, Snowflake
-from .user import User
 from .role import Role
+from .user import User
 
 
 @define()

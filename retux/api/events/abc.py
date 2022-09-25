@@ -1,6 +1,6 @@
-from .misc import TypingStart
-from .message import _MessageEvents
 from .guild import _GuildEvents
+from .message import _MessageEvents
+from .misc import TypingStart
 
 
 class _EventTable(_MessageEvents, _GuildEvents):

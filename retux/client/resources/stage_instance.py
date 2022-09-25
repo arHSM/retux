@@ -1,7 +1,8 @@
-from .abc import Snowflake
+from enum import IntEnum
 
 from attrs import define
-from enum import IntEnum
+
+from .abc import Snowflake
 
 __all__ = (
     "StageInstance",

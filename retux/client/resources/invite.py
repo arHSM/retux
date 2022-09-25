@@ -1,11 +1,12 @@
-from .abc import Timestamp
-from .user import User
-from .guild import Guild, Member
-from .channel import Channel
-from .application import Application
+from enum import IntEnum
 
 from attrs import define
-from enum import IntEnum
+
+from .abc import Timestamp
+from .application import Application
+from .channel import Channel
+from .guild import Guild, Member
+from .user import User
 
 
 class InviteTargetType(IntEnum):

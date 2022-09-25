@@ -1,9 +1,10 @@
-from .abc import Snowflake, Object, Timestamp
-from .user import User
-from .guild import Member
+from enum import IntEnum
 
 from attrs import define
-from enum import IntEnum
+
+from .abc import Object, Snowflake, Timestamp
+from .guild import Member
+from .user import User
 
 __all__ = (
     "GuildScheduledEvent",

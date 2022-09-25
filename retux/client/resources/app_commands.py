@@ -4,8 +4,11 @@ from attrs import define
 
 from .abc import Object, Snowflake
 
-
-__all__ = ("ApplicationCommand", "ApplicationCommandOption", "ApplicationCommandOptionChoice")
+__all__ = (
+    "ApplicationCommand",
+    "ApplicationCommandOption",
+    "ApplicationCommandOptionChoice",
+)
 
 
 @define(kw_only=True)

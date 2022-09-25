@@ -1,7 +1,7 @@
+from attrs import define
+
 from .abc import Snowflake, Timestamp
 from .guild import Member
-
-from attrs import define
 
 __all__ = ("Voice", "VoiceState")
 

@@ -1,6 +1,6 @@
-from attrs import define
 from enum import IntFlag
 
+from attrs import define
 
 from .abc import Object, Partial, Snowflake
 from .user import User

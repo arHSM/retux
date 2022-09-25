@@ -1,8 +1,9 @@
-from ...const import MISSING
-from io import IOBase
 from base64 import b64encode
+from io import IOBase
+
 from attrs import define
 
+from ...const import MISSING
 
 __all__ = ("ImageData",)
 

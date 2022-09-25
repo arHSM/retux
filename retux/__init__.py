@@ -10,6 +10,6 @@ contribution, feel free to make a pull request.
 - GitHub repository: https://github.com/ffl0w/retux
 - Documentation: https://retux.rtfd.io (or see `/examples`!)
 """
-from .client import *  # noqa
-from .api.http import *  # noqa
 from .api.events import *  # noqa
+from .api.http import *  # noqa
+from .client import *  # noqa

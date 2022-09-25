@@ -1,4 +1,5 @@
 from cattrs import Converter, register_structure_hook
+
 from ..client.resources.abc import Snowflake, Timestamp
 
 __all__ = "cattrs_structure_hooks"

@@ -1,8 +1,8 @@
-from .abc import Snowflake, Timestamp
-from .user import User
-from .guild import Guild
-
 from attrs import define
+
+from .abc import Snowflake, Timestamp
+from .guild import Guild
+from .user import User
 
 __all__ = ("GuildTemplate",)
 
