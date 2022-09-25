@@ -1,4 +1,4 @@
-from typing import TypeVar, Union
+from typing import TypeVar
 
 __all__ = (
     "__version__",
@@ -28,7 +28,7 @@ class MISSING:
 
 
 _T = TypeVar("_T")
-NotNeeded = Union[_T, MISSING]
+NotNeeded = _T | MISSING
 """
 A type variable to work alongside `MISSING`. This should only
 be used to help further indicate an optional argument where it
