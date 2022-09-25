@@ -1,6 +1,6 @@
 from enum import Enum
-from json import dumps, loads
-from logging import INFO, getLogger
+from json import dumps
+from logging import getLogger
 from mimetypes import guess_type
 from sys import version_info
 from typing import IO, Any, Literal, Protocol
