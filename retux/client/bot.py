@@ -25,9 +25,7 @@ class BotProtocol(Protocol):
     async def restart(self):
         ...
 
-    async def on(
-        self, coro: Coroutine, name: NotNeeded[str] = MISSING
-    ) -> Callable[..., Any]:
+    async def on(self, coro: Coroutine, name: NotNeeded[str] = MISSING) -> Callable[..., Any]:
         ...
 
     @property
@@ -107,9 +105,7 @@ class Bot(BotProtocol):
         async with GatewayClient(token, self.intents) as self._gateway:
             await self._gateway._hook(self)
 
-    def _register(
-        self, coro: Coroutine, name: Optional[str] = None, event: Optional[bool] = True
-    ):
+    def _register(self, coro: Coroutine, name: Optional[str] = None, event: Optional[bool] = True):
         """
         Registers a coroutine to be used as a callback.
 

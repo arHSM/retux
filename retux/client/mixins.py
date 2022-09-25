@@ -171,9 +171,7 @@ class Controllable:
         return await bot.http.request(route, payload)
 
     @classmethod
-    async def get(
-        cls, bot: "Bot", path: str, **query_params: dict | None
-    ) -> dict:  # noqa
+    async def get(cls, bot: "Bot", path: str, **query_params: dict | None) -> dict:  # noqa
         """
         Gets an object from the Discord API.
 

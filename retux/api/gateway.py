@@ -368,9 +368,7 @@ class GatewayClient(GatewayProtocol):
                     "You provided an invalid shard. Make sure the shard is correct! (https://discord.dev/topics/gateway#sharding)"
                 )
             case 4011:
-                raise RequiresSharding(
-                    "Your bot requires sharding, please use autoshard=True."
-                )
+                raise RequiresSharding("Your bot requires sharding, please use autoshard=True.")
             case 4013:
                 raise InvalidIntents(
                     "You provided an invalid intent. Make sure your intent is a value! (Did you also miss a | for adding more than one?)"
@@ -404,20 +402,14 @@ class GatewayClient(GatewayProtocol):
                 else:
                     logger.debug("New connection found, identifying to the Gateway.")
                     await self._identify()
-                    self._meta.heartbeat_interval = (
-                        payload.data["heartbeat_interval"] / 1000
-                    )
+                    self._meta.heartbeat_interval = payload.data["heartbeat_interval"] / 1000
                     logger.debug(f"Heartbeat set to {self._meta.heartbeat_interval}ms.")
                     self._heartbeat_ack = True
                     logger.debug("Began the heartbeat process.")
             case _GatewayOpCode.HEARTBEAT_ACK:
                 self._last_ack[1] = perf_counter()
-                logger.debug(
-                    f"The heartbeat was acknowledged. (took {self.latency}ms.)"
-                )
-                await self._dispatch(
-                    "HEARTBEAT_ACK", HeartbeatAck, latency=self.latency
-                )
+                logger.debug(f"The heartbeat was acknowledged. (took {self.latency}ms.)")
+                await self._dispatch("HEARTBEAT_ACK", HeartbeatAck, latency=self.latency)
                 self._last_ack[0] = perf_counter()
             case _GatewayOpCode.INVALID_SESSION:
                 logger.info(
@@ -513,9 +505,7 @@ class GatewayClient(GatewayProtocol):
             If a resource was not able to be found for
             the event called for, `MISSING` will be given.
         """
-        logger.debug(
-            f"Dispatching {_name}: {data if isinstance(data, dict) else kwargs}"
-        )
+        logger.debug(f"Dispatching {_name}: {data if isinstance(data, dict) else kwargs}")
 
         for bot in self._bots:
             if isinstance(data, (dict, MISSING)):
@@ -658,9 +648,7 @@ class GatewayClient(GatewayProtocol):
                 "self_deaf": False if self_deaf is MISSING else self_deaf,
             },
         )
-        logger.debug(
-            "Sending a payload requesting a voice state update to the Gateway."
-        )
+        logger.debug("Sending a payload requesting a voice state update to the Gateway.")
         await self._send(payload)
 
     async def update_presence(
